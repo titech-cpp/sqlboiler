@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   mod:
-    name: Mod
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-go@v1
