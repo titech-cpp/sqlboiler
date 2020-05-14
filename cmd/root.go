@@ -12,19 +12,13 @@ import (
 
 var cfgFile string
 
-// rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "sqlboiler",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Short: "スキーマ駆動開発に特化したSQL Boiler",
+	Long: `スキーマ駆動開発に特化したSQLBoiler。
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	//	Run: func(cmd *cobra.Command, args []string) { },
+スキーマと実装の間の齟齬が協力発生しないよう、
+スキーマとコードをともに1つのyamlから生成するようにしています。`,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
