@@ -6,8 +6,8 @@ import (
 )
 
 func checkMap(yamlMap map[string]interface{}, testMap map[string]interface{}) error {
-	for key,value := range yamlMap {
-		val,ok := testMap[key]
+	for key, value := range yamlMap {
+		val, ok := testMap[key]
 		if !ok {
 			return fmt.Errorf("No %s In testMap", key)
 		}
@@ -24,7 +24,7 @@ func checkMap(yamlMap map[string]interface{}, testMap map[string]interface{}) er
 		if ok {
 			valString, ok := val.(string)
 			if !ok {
-				return fmt.Errorf("Unexpected Error: %#v",val)
+				return fmt.Errorf("Unexpected Error: %#v", val)
 			}
 			if valueString != valString {
 				return fmt.Errorf("Invalid %s", key)
@@ -32,7 +32,7 @@ func checkMap(yamlMap map[string]interface{}, testMap map[string]interface{}) er
 		}
 	}
 	for key := range testMap {
-		_,ok := yamlMap[key]
+		_, ok := yamlMap[key]
 		if !ok {
 			return fmt.Errorf("No %s In yanlMap", key)
 		}
@@ -41,11 +41,11 @@ func checkMap(yamlMap map[string]interface{}, testMap map[string]interface{}) er
 }
 
 func TestReadYaml(t *testing.T) {
-	yamlMap,err := ReadYaml("../testdata/test.yaml")
+	yamlMap, err := ReadYaml("../testdata/test.yaml")
 	if err != nil {
 		t.Fatalf("ReadYaml Error: %#v", err)
 	}
-	testMap := map[string] interface{}{
+	testMap := map[string]interface{}{
 		"table": map[string]interface{}{
 			"messages": map[string]interface{}{
 				"user_id": map[string]interface{}{
@@ -58,7 +58,7 @@ func TestReadYaml(t *testing.T) {
 			},
 		},
 	}
-	if err = checkMap(yamlMap,testMap); err != nil {
+	if err = checkMap(yamlMap, testMap); err != nil {
 		t.Fatalf("Invalid Map: %#v", err)
 	}
 	t.Logf("map: %#v", yamlMap)
