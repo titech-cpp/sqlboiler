@@ -1,0 +1,94 @@
+db:
+  type: mysql
+  name: twitter-clone
+table:
+  users:
+    id:
+      type: int(11)
+      auto_increment: true
+      key: primary
+    name:
+      type: varchar(32)
+      null: false
+    password:
+      type: char(128)
+      null: false
+    created_at:
+      type: datetime(6)
+      default: current_timestamp
+      null: false
+    updated_at:
+      type: datetime(6)
+      default: current_timestamp
+      null: false
+    deleted_at:
+      type: datetime(6)
+      default: null
+  messages:
+    id:
+      type: varchar(36)
+      key: primary
+    user_id:
+      type: int(11)
+      null: false
+      foreign_key:
+        users: id
+    content:
+      type: text
+      null: false
+    is_pinned:
+      type: boolean
+      null: false
+      default: false
+    created_at:
+      type: datetime(6)
+      default: current_timestamp
+      null: false
+    updated_at:
+      type: datetime(6)
+      default: null
+    deleted_at:
+      type: datetime(6)
+      default: null
+  follow:
+    id:
+      type: int(11)
+      auto_increment: true
+      key: primary
+    user_id:
+      type: int(11)
+      null: false
+      foreign_key:
+        users: id
+    target_user_id:
+      type: int(11)
+      null: false
+      foreign_key:
+        users: id
+    created_at:
+      type: datetime(6)
+      default: current_timestamp
+      null: false
+    deleted_at:
+      type: datetime(6)
+      default: null
+  favorite:
+    id:
+      type: int(11)
+      auto_increment: true
+      key: primary
+    user_id:
+      type: int(11)
+      null: false
+      foreign_key:
+        users: id
+    target_message_id:
+      type: varchar(36)
+      null: false
+    created_at:
+      type: datetime(6)
+      default: current_timestamp
+      null: false
+    deleted_at:
+      type: datetime(6)
+      default: null
