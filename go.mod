@@ -3,9 +3,8 @@ module github.com/titech-cpp/sqlboiler
 go 1.14
 
 require (
-	github.com/golangci/golangci-lint v1.27.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.7.0
-	gopkg.in/yaml.v2 v2.2.8
+	gopkg.in/yaml.v2 v2.3.0
 )
