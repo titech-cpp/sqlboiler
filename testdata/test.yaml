@@ -1,0 +1,7 @@
+table:
+  messages:
+    user_id:
+      type: int(11)
+      null: false
+      foreign-key:
+        users: id
