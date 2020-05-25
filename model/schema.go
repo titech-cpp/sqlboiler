@@ -20,4 +20,5 @@ type SchemaColumn struct {
 	Key     string
 	Default string
 	Extra   []string
+	Description string
 }
