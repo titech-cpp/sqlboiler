@@ -14,7 +14,7 @@ type Yaml struct {
 }
 
 // NewYaml Yamlのコンストラクタ
-func NewYaml(path string) (*Yaml,error) {
+func NewYaml(path string) (*Yaml, error) {
 	boilerYaml := Yaml{
 		yaml: model.Yaml{},
 	}

@@ -42,9 +42,9 @@ func (b *BoilBase) MakeFile(fileName string, vars interface{}) error {
 	defer fp.Close()
 
 	file, err := os.Create(b.basePath + "/" + fileName)
-    if err != nil {
-        return fmt.Errorf("File Create Error: %w", err)
-    }
+	if err != nil {
+		return fmt.Errorf("File Create Error: %w", err)
+	}
 	defer file.Close()
 
 	buf := new(bytes.Buffer)

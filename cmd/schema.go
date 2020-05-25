@@ -8,7 +8,7 @@ import (
 )
 
 type schemaOptions struct {
-	yamlPath string
+	yamlPath   string
 	schemaPath string
 }
 
@@ -19,7 +19,7 @@ var (
 var schemaCmd = &cobra.Command{
 	Use:   "schema",
 	Short: "スキーマの生成",
-	Long: `スキーマの生成のみ行います。`,
+	Long:  `スキーマの生成のみ行います。`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		yaml, err := boiler.NewYaml(schemaOpt.yamlPath)
 		if err != nil {

@@ -14,11 +14,11 @@ type SchemaTable struct {
 
 // SchemaColumn カラムの構造体
 type SchemaColumn struct {
-	Name    string
-	Type    string
-	Null    bool
-	Key     string
-	Default string
-	Extra   []string
+	Name        string
+	Type        string
+	Null        bool
+	Key         string
+	Default     string
+	Extra       []string
 	Description string
 }
