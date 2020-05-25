@@ -14,7 +14,7 @@ type Schema struct {
 }
 
 // NewSchema Schemaのコンストラクタ
-func NewSchema(basePath string, yaml model.Yaml) Schema {
+func NewSchema(basePath string, yaml *model.Yaml) Schema {
 	tables := make([]model.SchemaTable, 0, len(yaml.Tables))
 	for key, val := range yaml.Tables {
 		columns := make([]model.SchemaColumn, 0, len(val))
@@ -42,6 +42,9 @@ func NewSchema(basePath string, yaml model.Yaml) Schema {
 	schemaContainer := model.Schema{
 		DB:     yaml.DB,
 		Tables: tables,
+	}
+	if basePath == "" {
+		basePath = "./docs"
 	}
 	boilBase := base.NewBoilBase(basePath)
 	schema := Schema{
