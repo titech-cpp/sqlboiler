@@ -2,17 +2,13 @@ package boiler
 
 import (
 	"testing"
-
-	"github.com/titech-cpp/sqlboiler/model"
 )
 
 func TestReadYaml(t *testing.T) {
-	yaml := new(Yaml)
-	var yamls model.Yaml
-	err := yaml.ReadYaml("../sample/sqlboiler.yaml", &yamls)
+	yaml, err := NewYaml("../sample/sqlboiler.yaml")
 	if err != nil {
 		t.Fatalf("ReadYaml Error: %#v", err)
 	}
 
-	t.Logf("map: %#v", yamls)
+	t.Logf("map: %#v", yaml.yaml)
 }
