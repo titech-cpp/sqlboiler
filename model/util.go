@@ -14,7 +14,7 @@ type db struct {
 type NameDetail struct {
 	UpperCamel string
 	LowerCamel string
-	Snake string
+	Snake      string
 }
 
 // NewNameDetail NameDeatailのコンストラクタ
@@ -34,10 +34,10 @@ func NewNameDetail(snake string) (*NameDetail, error) {
 	return nameDetail, nil
 }
 
-func snakeToCamel(snake string, isUpper bool) (string,error) {
+func snakeToCamel(snake string, isUpper bool) (string, error) {
 	var buf bytes.Buffer
 	isUnderBar := false
-	for i,c := range snake {
+	for i, c := range snake {
 		if (c < 'a' || 'z' < c) && c != '_' {
 			return "", fmt.Errorf("Invaid Non Small Case %s In %s", string(c), snake)
 		}

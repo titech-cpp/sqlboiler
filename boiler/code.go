@@ -30,9 +30,9 @@ func NewCode(basePath string, yaml *model.Yaml) (*Code, error) {
 			}
 
 			column := &model.CodeColumn{
-				Name:    name,
-				Type:    goType,
-				Null:    v.Null,
+				Name:     name,
+				Type:     goType,
+				Null:     v.Null,
 				ReadOnly: v.AutoIncrement,
 			}
 			columns = append(columns, column)
@@ -54,7 +54,7 @@ func NewCode(basePath string, yaml *model.Yaml) (*Code, error) {
 	boilBase := base.NewBoilBase(basePath)
 	code := &Code{
 		BoilerBase: boilBase,
-		Code:     codeContainer,
+		Code:       codeContainer,
 	}
 	return code, nil
 }
@@ -73,33 +73,33 @@ func (c *Code) BoilCode() error {
 	return nil
 }
 
-func typeParser(sqlType string) (string,error) {
-	typeMap := map[string]string {
-		"boolean": "bool",
-		"char": "string",
-		"varchar": "string",
-		"binary": "string",
+func typeParser(sqlType string) (string, error) {
+	typeMap := map[string]string{
+		"boolean":   "bool",
+		"char":      "string",
+		"varchar":   "string",
+		"binary":    "string",
 		"varbinary": "string",
-		"blob": "blob",
-		"text": "string",
-		"integer": "int32",
-		"int": "int32",
-		"bigint": "int64",
+		"blob":      "blob",
+		"text":      "string",
+		"integer":   "int32",
+		"int":       "int32",
+		"bigint":    "int64",
 		"mediumint": "int32",
-		"smallint": "int16",
-		"tinyint": "int8",
-		"date": "timeTime",
-		"datetime": "timeTime",
+		"smallint":  "int16",
+		"tinyint":   "int8",
+		"date":      "timeTime",
+		"datetime":  "timeTime",
 		"timestamp": "timeTime",
-		"time": "timeTime",
-		"year": "timeTime",
+		"time":      "timeTime",
+		"year":      "timeTime",
 	}
 
 	var buf bytes.Buffer
 	isStringfied := false
-	for _,c := range sqlType {
+	for _, c := range sqlType {
 		if (c < 'a' || 'z' < c) && (c < '0' || '9' < c) && c != '(' && c != ')' {
-			return "",fmt.Errorf("%s In Type %s Should Be Lower Case", string(c), sqlType)
+			return "", fmt.Errorf("%s In Type %s Should Be Lower Case", string(c), sqlType)
 		}
 		if c == '(' && !isStringfied {
 			sqlType = buf.String()

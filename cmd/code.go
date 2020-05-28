@@ -8,7 +8,7 @@ import (
 )
 
 type codeOptions struct {
-	yamlPath   string
+	yamlPath string
 	codePath string
 }
 
@@ -20,7 +20,7 @@ var (
 var codeCmd = &cobra.Command{
 	Use:   "code",
 	Short: "コードの生成",
-	Long: `コードの生成のみ行います。`,
+	Long:  `コードの生成のみ行います。`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		yaml, err := boiler.NewYaml(codeOpt.yamlPath)
 		if err != nil {
