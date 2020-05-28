@@ -25,7 +25,7 @@ var schemaCmd = &cobra.Command{
 		if err != nil {
 			return fmt.Errorf("Yaml Error: %w", err)
 		}
-		schema := boiler.NewSchema(schemaOpt.schemaPath, yaml)
+		schema := boiler.NewSchema(schemaOpt.schemaPath, yaml.Yaml)
 		if err != nil {
 			return fmt.Errorf("Schema Error: %w", err)
 		}

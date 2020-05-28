@@ -10,5 +10,5 @@ func TestReadYaml(t *testing.T) {
 		t.Fatalf("ReadYaml Error: %#v", err)
 	}
 
-	t.Logf("map: %#v", yaml.yaml)
+	t.Logf("map: %#v", yaml.Yaml)
 }

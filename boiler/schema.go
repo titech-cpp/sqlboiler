@@ -14,13 +14,15 @@ type Schema struct {
 }
 
 // NewSchema Schemaのコンストラクタ
-func NewSchema(basePath string, yaml *Yaml) Schema {
-	modelYaml := yaml.yaml
-	tables := make([]model.SchemaTable, 0, len(modelYaml.Tables))
-	for key, val := range modelYaml.Tables {
+func NewSchema(basePath string, yaml *model.Yaml) *Schema {
+	tables := make([]model.SchemaTable, 0, len(yaml.Tables))
+	for key, val := range yaml.Tables {
 		columns := make([]model.SchemaColumn, 0, len(val))
 		for k, v := range val {
 			extra := make([]string, 0)
+			if v.AutoIncrement {
+				extra = append(extra, "AUTO_INCREMENT")
+			}
 
 			column := model.SchemaColumn{
 				Name:    k,
@@ -39,7 +41,7 @@ func NewSchema(basePath string, yaml *Yaml) Schema {
 		tables = append(tables, table)
 	}
 	schemaContainer := model.Schema{
-		DB:     modelYaml.DB,
+		DB:     yaml.DB,
 		Tables: tables,
 	}
 	boilBase := base.NewBoilBase(basePath)
@@ -47,7 +49,7 @@ func NewSchema(basePath string, yaml *Yaml) Schema {
 		BoilerBase: boilBase,
 		Schema:     &schemaContainer,
 	}
-	return schema
+	return &schema
 }
 
 // BoilSchema スキーマの生成
