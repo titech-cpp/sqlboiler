@@ -3,92 +3,92 @@ db:
   name: twitter-clone
 tables:
   users:
-    id:
+    - name: id
       type: int(11)
       auto_increment: true
-      key: primary
-    name:
+      key: PRI
+    - name: name
       type: varchar(32)
       null: false
-    password:
+    - name: password
       type: char(128)
       null: false
-    created_at:
+    - name: created_at
       type: datetime(6)
       default: CURRENT_TIMESTAMP
       null: false
-    updated_at:
+    - name: updated_at
       type: datetime(6)
       default: CURRENT_TIMESTAMP
       null: false
-    deleted_at:
+    - name: deleted_at
       type: datetime(6)
       default: null
   messages:
-    id:
+    - name: id
       type: varchar(36)
-      key: primary
-    user_id:
+      key: PRI
+    - name: user_id
       type: int(11)
       null: false
       foreign_key:
         users: id
-    content:
+    - name: content
       type: text
       null: false
-    is_pinned:
+    - name: is_pinned
       type: boolean
       null: false
       default: false
-    created_at:
+    - name: created_at
       type: datetime(6)
       default: CURRENT_TIMESTAMP
       null: false
-    updated_at:
+    - name: updated_at
       type: datetime(6)
       default: null
-    deleted_at:
+    - name: deleted_at
       type: datetime(6)
       default: null
   follow:
-    id:
+    - name: id
       type: int(11)
       auto_increment: true
-      key: primary
-    user_id:
+      key: PRI
+    - name: user_id
       type: int(11)
       null: false
       foreign_key:
         users: id
-    target_user_id:
+    - name: target_user_id
       type: int(11)
       null: false
       foreign_key:
         users: id
-    created_at:
+    - name: created_at
       type: datetime(6)
       default: CURRENT_TIMESTAMP
       null: false
-    deleted_at:
+    - name: deleted_at
       type: datetime(6)
       default: null
   favorite:
-    id:
+    - name: id
       type: int(11)
       auto_increment: true
-      key: primary
-    user_id:
+      key: PRI
+    - name: user_id
       type: int(11)
       null: false
       foreign_key:
         users: id
-    target_message_id:
+    - name: target_message_id
       type: varchar(36)
       null: false
-    created_at:
+    - name: created_at
       type: datetime(6)
       default: CURRENT_TIMESTAMP
       null: false
-    deleted_at:
+    - name: deleted_at
       type: datetime(6)
       default: null
