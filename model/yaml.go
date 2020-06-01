@@ -17,15 +17,8 @@ func (y *Yaml) Check(yml *Yaml) bool {
 		if !ok {
 			return false
 		}
-		for k, val := range value {
-			v, ok := table[k]
-			if !ok || !val.Check(v) {
-				return false
-			}
-		}
-		for k, val := range table {
-			v, ok := value[k]
-			if !ok || !val.Check(v) {
+		for i, val := range table {
+			if !val.Check(value[i]) {
 				return false
 			}
 		}
@@ -36,15 +29,8 @@ func (y *Yaml) Check(yml *Yaml) bool {
 		if !ok {
 			return false
 		}
-		for k, val := range value {
-			v, ok := table[k]
-			if !ok || !val.Check(v) {
-				return false
-			}
-		}
-		for k, val := range table {
-			v, ok := value[k]
-			if !ok || !val.Check(v) {
+		for i, val := range table {
+			if !val.Check(value[i]) {
 				return false
 			}
 		}
@@ -53,10 +39,11 @@ func (y *Yaml) Check(yml *Yaml) bool {
 	return true
 }
 
-type yamlColumns = map[string]*YamlColumn
+type yamlColumns = []*YamlColumn
 
 // YamlColumn カラムの構造体
 type YamlColumn struct {
+	Name string
 	Type          string
 	Null          bool
 	AutoIncrement bool
@@ -66,5 +53,5 @@ type YamlColumn struct {
 
 // Check 同一か確認
 func (y *YamlColumn) Check(yc *YamlColumn) bool {
-	return y.Type == yc.Type && y.Null == yc.Null && y.AutoIncrement == yc.AutoIncrement && y.Key == yc.Key && y.Default == yc.Default
+	return y.Name == yc.Name || y.Type == yc.Type && y.Null == yc.Null && y.AutoIncrement == yc.AutoIncrement && y.Key == yc.Key && y.Default == yc.Default
 }

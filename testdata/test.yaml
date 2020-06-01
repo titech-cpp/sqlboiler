@@ -1,6 +1,9 @@
-table:
+db:
+  type: mysql
+  name: test
+tables:
   messages:
-    user_id:
+    - name: user_id
       type: int(11)
       null: false
       foreign-key:

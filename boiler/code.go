@@ -21,14 +21,14 @@ func NewCode(basePath string, yaml *model.Yaml) (*Code, error) {
 	tables := make([]*model.CodeTable, 0, len(yaml.Tables))
 	for key, val := range yaml.Tables {
 		columns := make([]*model.CodeColumn, 0, len(val))
-		for k, v := range val {
-			name, err := model.NewNameDetail(k)
+		for _, v := range val {
+			name, err := model.NewNameDetail(v.Name)
 			if err != nil {
-				return nil, fmt.Errorf("Name Detail Constructor(%s.%s) Error: %w", key, k, err)
+				return nil, fmt.Errorf("Name Detail Constructor(%s.%s) Error: %w", key, v.Name, err)
 			}
 			goType, err := typeParser(v.Type)
 			if err != nil {
-				return nil, fmt.Errorf("Type Parse Error(%s.%s): %w", key, k, err)
+				return nil, fmt.Errorf("Type Parse Error(%s.%s): %w", key, v.Name, err)
 			}
 
 			column := &model.CodeColumn{

@@ -18,14 +18,14 @@ func NewSchema(basePath string, yaml *model.Yaml) *Schema {
 	tables := make([]*model.SchemaTable, 0, len(yaml.Tables))
 	for key, val := range yaml.Tables {
 		columns := make([]*model.SchemaColumn, 0, len(val))
-		for k, v := range val {
+		for _, v := range val {
 			extra := make([]string, 0)
 			if v.AutoIncrement {
 				extra = append(extra, "AUTO_INCREMENT")
 			}
 
 			column := model.SchemaColumn{
-				Name:    k,
+				Name:    v.Name,
 				Type:    v.Type,
 				Null:    v.Null,
 				Key:     v.Key,
@@ -59,7 +59,7 @@ func (s *Schema) BoilSchema() error {
 		return fmt.Errorf("Make Base Directory Error: %w", err)
 	}
 
-	fileNames := []string{"dbschemas.go"}
+	fileNames := []string{"dbschema.md"}
 	for _, fileName := range fileNames {
 		fw, err := s.MakeFileWriter(fileName)
 		if err != nil {
