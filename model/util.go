@@ -1,13 +1,19 @@
 package model
 
 import (
-	"bytes"
 	"fmt"
+	"strings"
 )
 
-type db struct {
+// DB データベース
+type DB struct {
 	Type string
 	Name string
+}
+
+// Check 同一か確認
+func (d *DB) Check(db *DB) bool {
+	return d.Type == db.Type && d.Name == db.Name
 }
 
 // NameDetail 名前の詳細
@@ -21,12 +27,12 @@ type NameDetail struct {
 func NewNameDetail(snake string) (*NameDetail, error) {
 	nameDetail := new(NameDetail)
 	nameDetail.Snake = snake
-	upper, err := snakeToCamel(snake, true)
+	upper, err := nameDetail.snakeToCamel(snake, true)
 	if err != nil {
 		return nil, fmt.Errorf("Parse Snake Case To Upper Camel Case Error: %w", err)
 	}
 	nameDetail.UpperCamel = upper
-	lower, err := snakeToCamel(snake, false)
+	lower, err := nameDetail.snakeToCamel(snake, false)
 	if err != nil {
 		return nil, fmt.Errorf("Parse Snake Case To Lower Case Error: %w", err)
 	}
@@ -34,8 +40,13 @@ func NewNameDetail(snake string) (*NameDetail, error) {
 	return nameDetail, nil
 }
 
-func snakeToCamel(snake string, isUpper bool) (string, error) {
-	var buf bytes.Buffer
+// Check 同一かチェック
+func (n *NameDetail) Check(nd *NameDetail) bool {
+	return n.UpperCamel == nd.UpperCamel && n.LowerCamel == nd.LowerCamel && n.Snake == nd.Snake
+}
+
+func (*NameDetail) snakeToCamel(snake string, isUpper bool) (string, error) {
+	var builder strings.Builder
 	isUnderBar := false
 	for i, c := range snake {
 		if (c < 'a' || 'z' < c) && c != '_' {
@@ -44,18 +55,18 @@ func snakeToCamel(snake string, isUpper bool) (string, error) {
 		if i == 0 && c == '_' {
 			return "", fmt.Errorf("Invalid First `_` In %s", snake)
 		} else if i == 0 && isUpper {
-			buf.WriteRune(c - 'a' + 'A')
+			builder.WriteRune(c - 'a' + 'A')
 		} else if isUnderBar && c == '_' {
 			return "", fmt.Errorf("Invalid Consecutive UnderBar In %s", snake)
 		} else if isUnderBar {
-			buf.WriteRune(c - 'a' + 'A')
+			builder.WriteRune(c - 'a' + 'A')
 			isUnderBar = false
 		} else if c == '_' {
 			isUnderBar = true
 		} else {
-			buf.WriteRune(c)
+			builder.WriteRune(c)
 		}
 	}
 
-	return buf.String(), nil
+	return builder.String(), nil
 }
