@@ -25,7 +25,7 @@ func TestNameDetail(t *testing.T) {
 		t.Fatal("Unexpected No Error(Aaa_bbb)")
 	}
 
-	result,err = nd.snakeToCamel("Aaa__bbb", true)
+	_,err = nd.snakeToCamel("Aaa__bbb", true)
 	if err == nil {
 		t.Fatal("Unexpected No Error(Aaa__bbb)")
 	}
