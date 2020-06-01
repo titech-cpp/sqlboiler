@@ -60,7 +60,7 @@ func (s *Schema) BoilSchema() error {
 	}
 
 	fileNames := []string{"dbschemas.go"}
-	for _,fileName := range fileNames {
+	for _, fileName := range fileNames {
 		fw, err := s.MakeFileWriter(fileName)
 		if err != nil {
 			return fmt.Errorf("Make File Writer Error(%s): %w", fileName, err)

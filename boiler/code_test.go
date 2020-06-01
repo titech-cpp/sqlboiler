@@ -18,27 +18,27 @@ func TestCode(t *testing.T) {
 				Name: &model.NameDetail{
 					UpperCamel: "TestTest",
 					LowerCamel: "testTest",
-					Snake: "test_test",
+					Snake:      "test_test",
 				},
 				Columns: []*model.CodeColumn{
 					{
 						Name: &model.NameDetail{
 							UpperCamel: "Testa",
 							LowerCamel: "testa",
-							Snake: "testa",
+							Snake:      "testa",
 						},
-						Type: "int32",
-						Null: true,
+						Type:     "int32",
+						Null:     true,
 						ReadOnly: true,
 					},
 					{
 						Name: &model.NameDetail{
 							UpperCamel: "Testb",
 							LowerCamel: "testb",
-							Snake: "testb",
+							Snake:      "testb",
 						},
-						Type: "int32",
-						Null: false,
+						Type:     "int32",
+						Null:     false,
 						ReadOnly: false,
 					},
 				},
@@ -46,7 +46,7 @@ func TestCode(t *testing.T) {
 		},
 	}
 
-	code,err := NewCode("test.go",yaml.Yaml)
+	code, err := NewCode("test.go", yaml.Yaml)
 	if err != nil {
 		t.Fatalf("Unexpected Code Constructor Error: %#v", err)
 	}
@@ -57,7 +57,7 @@ func TestCode(t *testing.T) {
 	}
 
 	expectedType := "bool"
-	goType,err := typeParser("boolean")
+	goType, err := typeParser("boolean")
 	if err != nil {
 		t.Fatalf("Unexpected TypeParser Error: %#v", err)
 	}
@@ -65,7 +65,7 @@ func TestCode(t *testing.T) {
 		t.Fatalf("Invalid Parsed Type %s, Expected %s", goType, expectedType)
 	}
 
-	_,err = typeParser("test")
+	_, err = typeParser("test")
 	if err == nil {
 		t.Fatalf("Unexpected No Error: %s", goType)
 	}

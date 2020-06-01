@@ -70,7 +70,7 @@ func (c *Code) BoilCode() error {
 	}
 
 	fileNames := []string{"tables.go", "types.go"}
-	for _,fileName := range fileNames {
+	for _, fileName := range fileNames {
 		fw, err := c.MakeFileWriter(fileName)
 		if err != nil {
 			return fmt.Errorf("Make File Writer Error(%s): %w", fileName, err)

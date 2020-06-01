@@ -12,7 +12,7 @@ func (s *Schema) Check(sc *Schema) bool {
 		return false
 	}
 
-	for i,v := range s.Tables {
+	for i, v := range s.Tables {
 		if !v.Check(sc.Tables[i]) {
 			return false
 		}
@@ -33,7 +33,7 @@ func (s *SchemaTable) Check(st *SchemaTable) bool {
 		return false
 	}
 
-	for i,v := range s.Columns {
+	for i, v := range s.Columns {
 		if !v.Check(st.Columns[i]) {
 			return false
 		}
@@ -59,7 +59,7 @@ func (s *SchemaColumn) Check(sc *SchemaColumn) bool {
 		return false
 	}
 
-	for i,v := range s.Extra {
+	for i, v := range s.Extra {
 		if sc.Extra[i] != v {
 			return false
 		}

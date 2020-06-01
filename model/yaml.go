@@ -12,38 +12,38 @@ func (y *Yaml) Check(yml *Yaml) bool {
 		return false
 	}
 
-	for key,value := range y.Tables {
-		table,ok := yml.Tables[key];
+	for key, value := range y.Tables {
+		table, ok := yml.Tables[key]
 		if !ok {
 			return false
 		}
-		for k,val := range value {
-			v,ok := table[k]
+		for k, val := range value {
+			v, ok := table[k]
 			if !ok || !val.Check(v) {
 				return false
 			}
 		}
-		for k,val := range table {
-			v,ok := value[k]
+		for k, val := range table {
+			v, ok := value[k]
 			if !ok || !val.Check(v) {
 				return false
 			}
 		}
 	}
 
-	for key,value := range yml.Tables {
-		table,ok := y.Tables[key];
+	for key, value := range yml.Tables {
+		table, ok := y.Tables[key]
 		if !ok {
 			return false
 		}
-		for k,val := range value {
-			v,ok := table[k]
+		for k, val := range value {
+			v, ok := table[k]
 			if !ok || !val.Check(v) {
 				return false
 			}
 		}
-		for k,val := range table {
-			v,ok := value[k]
+		for k, val := range table {
+			v, ok := value[k]
 			if !ok || !val.Check(v) {
 				return false
 			}
