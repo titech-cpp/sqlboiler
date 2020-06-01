@@ -2,14 +2,44 @@ package model
 
 // Schema スキーマの構造体
 type Schema struct {
-	DB     db
-	Tables []SchemaTable
+	DB     DB
+	Tables []*SchemaTable
+}
+
+// Check 同一か確認
+func (s *Schema) Check(sc *Schema) bool {
+	if !s.DB.Check(&sc.DB) || len(s.Tables) != len(sc.Tables) {
+		return false
+	}
+
+	for i, v := range s.Tables {
+		if !v.Check(sc.Tables[i]) {
+			return false
+		}
+	}
+
+	return true
 }
 
 // SchemaTable テーブルの構造体
 type SchemaTable struct {
 	Name    string
-	Columns []SchemaColumn
+	Columns []*SchemaColumn
+}
+
+// Check 同一か確認
+func (s *SchemaTable) Check(st *SchemaTable) bool {
+	if s.Name != st.Name || len(s.Columns) != len(st.Columns) {
+		return false
+	}
+
+	for i, v := range s.Columns {
+		if !v.Check(st.Columns[i]) {
+			return false
+		}
+	}
+
+	return true
 }
 
 // SchemaColumn カラムの構造体
@@ -21,4 +51,19 @@ type SchemaColumn struct {
 	Default     string
 	Extra       []string
 	Description string
+}
+
+// Check 同一か確認
+func (s *SchemaColumn) Check(sc *SchemaColumn) bool {
+	if s.Name != sc.Name || s.Type != sc.Type || s.Null != sc.Null || s.Key != sc.Key || s.Default != sc.Default || len(s.Extra) != len(sc.Extra) || s.Description != sc.Description {
+		return false
+	}
+
+	for i, v := range s.Extra {
+		if sc.Extra[i] != v {
+			return false
+		}
+	}
+
+	return true
 }

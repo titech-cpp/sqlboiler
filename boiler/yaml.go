@@ -8,6 +8,12 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+/*
+今の所バリデーションがないのでかなり小さいが、
+今後バリデーションがここに入ると他の構造体と同等に肥大化して分離したくなると
+予想されるので今のうちから分離している
+*/
+
 // Yaml yamlの構造体
 type Yaml struct {
 	Yaml *model.Yaml
@@ -29,4 +35,33 @@ func NewYaml(path string) (*Yaml, error) {
 	}
 
 	return &boilerYaml, nil
+}
+
+func newTestYaml() *Yaml {
+	return &Yaml{
+		Yaml: &model.Yaml{
+			DB: model.DB{
+				Type: "mysql",
+				Name: "test",
+			},
+			Tables: map[string]map[string]*model.YamlColumn{
+				"test_test": {
+					"testa": {
+						Type:          "int(1)",
+						Null:          true,
+						AutoIncrement: true,
+						Key:           "PRI",
+						Default:       "default",
+					},
+					"testb": {
+						Type:          "int",
+						Null:          false,
+						AutoIncrement: false,
+						Key:           "",
+						Default:       "",
+					},
+				},
+			},
+		},
+	}
 }

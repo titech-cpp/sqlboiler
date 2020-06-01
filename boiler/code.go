@@ -16,6 +16,8 @@ type Code struct {
 
 // NewCode Codeのコンストラクタ
 func NewCode(basePath string, yaml *model.Yaml) (*Code, error) {
+	code := new(Code)
+
 	tables := make([]*model.CodeTable, 0, len(yaml.Tables))
 	for key, val := range yaml.Tables {
 		columns := make([]*model.CodeColumn, 0, len(val))
@@ -51,23 +53,32 @@ func NewCode(basePath string, yaml *model.Yaml) (*Code, error) {
 		DB:     yaml.DB,
 		Tables: tables,
 	}
+
 	boilBase := base.NewBoilBase(basePath)
-	code := &Code{
-		BoilerBase: boilBase,
-		Code:       codeContainer,
-	}
+
+	code.BoilerBase = boilBase
+	code.Code = codeContainer
+
 	return code, nil
 }
 
 // BoilCode コードの生成
 func (c *Code) BoilCode() error {
-	err := c.MakeFile("tables.go", c.Code)
+	err := c.MakeBaseDir()
 	if err != nil {
-		return fmt.Errorf("Make File Error(%s): %w", "tables.go", err)
+		return fmt.Errorf("Make Base Directory Error: %w", err)
 	}
-	err = c.MakeFile("types.go", c.Code)
-	if err != nil {
-		return fmt.Errorf("Make File Error(%s): %w", "types.go", err)
+
+	fileNames := []string{"tables.go", "types.go"}
+	for _, fileName := range fileNames {
+		fw, err := c.MakeFileWriter(fileName)
+		if err != nil {
+			return fmt.Errorf("Make File Writer Error(%s): %w", fileName, err)
+		}
+		err = c.MakeFile(fw, fileName, c.Code)
+		if err != nil {
+			return fmt.Errorf("Make File Error(%s): %w", fileName, err)
+		}
 	}
 
 	return nil

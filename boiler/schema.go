@@ -15,9 +15,9 @@ type Schema struct {
 
 // NewSchema Schemaのコンストラクタ
 func NewSchema(basePath string, yaml *model.Yaml) *Schema {
-	tables := make([]model.SchemaTable, 0, len(yaml.Tables))
+	tables := make([]*model.SchemaTable, 0, len(yaml.Tables))
 	for key, val := range yaml.Tables {
-		columns := make([]model.SchemaColumn, 0, len(val))
+		columns := make([]*model.SchemaColumn, 0, len(val))
 		for k, v := range val {
 			extra := make([]string, 0)
 			if v.AutoIncrement {
@@ -32,13 +32,13 @@ func NewSchema(basePath string, yaml *model.Yaml) *Schema {
 				Default: v.Default,
 				Extra:   extra,
 			}
-			columns = append(columns, column)
+			columns = append(columns, &column)
 		}
 		table := model.SchemaTable{
 			Name:    key,
 			Columns: columns,
 		}
-		tables = append(tables, table)
+		tables = append(tables, &table)
 	}
 	schemaContainer := model.Schema{
 		DB:     yaml.DB,
@@ -54,9 +54,21 @@ func NewSchema(basePath string, yaml *model.Yaml) *Schema {
 
 // BoilSchema スキーマの生成
 func (s *Schema) BoilSchema() error {
-	err := s.MakeFile("dbschema.md", s.Schema)
+	err := s.MakeBaseDir()
 	if err != nil {
-		return fmt.Errorf("Make File Error: %w", err)
+		return fmt.Errorf("Make Base Directory Error: %w", err)
+	}
+
+	fileNames := []string{"dbschemas.go"}
+	for _, fileName := range fileNames {
+		fw, err := s.MakeFileWriter(fileName)
+		if err != nil {
+			return fmt.Errorf("Make File Writer Error(%s): %w", fileName, err)
+		}
+		err = s.MakeFile(fw, fileName, s.Schema)
+		if err != nil {
+			return fmt.Errorf("Make File Error(%s): %w", fileName, err)
+		}
 	}
 
 	return nil
