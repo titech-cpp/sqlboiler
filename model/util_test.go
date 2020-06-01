@@ -20,7 +20,7 @@ func TestNameDetail(t *testing.T) {
 		t.Fatalf("Invalid SnakeToCamel Value %s, Expected aaaBbb", result)
 	}
 
-	result, err = nd.snakeToCamel("Aaa_bbb", true)
+	_, err = nd.snakeToCamel("Aaa_bbb", true)
 	if err == nil {
 		t.Fatal("Unexpected No Error(Aaa_bbb)")
 	}
