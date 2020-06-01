@@ -3,8 +3,8 @@ name: CI
 on: [push]
 
 jobs:
-  mod:
-    name: Lint
+  lint:
+    name: Lint & Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/setup-go@v1
@@ -24,3 +24,5 @@ jobs:
         run: echo "::add-path::$(go env GOPATH)/bin"
       - name: golangci-lint
         run: golangci-lint run
+      - name: Run test
+        run: go test ./...
