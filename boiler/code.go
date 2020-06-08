@@ -81,6 +81,19 @@ func (c *Code) BoilCode() error {
 		}
 	}
 
+	for _, table := range c.Tables {
+		fileName := fmt.Sprintf("%s_query.go",table.Name.Snake)
+		fw, err := c.MakeFileWriter(fileName)
+		if err != nil {
+			return fmt.Errorf("Make File Writer Error(%s): %w", fileName, err)
+		}
+		fileName = "queries.go"
+		err = c.MakeFile(fw, fileName, table)
+		if err != nil {
+			return fmt.Errorf("Make File Error(%s): %w", fileName, err)
+		}
+	}
+
 	return nil
 }
 
