@@ -4,8 +4,6 @@ import (
 	"fmt"
 )
 
-const tagName = "db"
-
 // Where WHERE関連の構造体
 type Where struct {}
 
