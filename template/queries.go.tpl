@@ -7,10 +7,16 @@ import (
     "github.com/titech-cpp/sqlboiler/queries"
 )
 
+type {{.Name.LowerCamel}} int
+{{$lowerTable := .Name.LowerCamel}}{{$upperTable := .Name.UpperCamel}}
+const ({{range $i, $v := .Columns}}
+    {{printf $upperTable}}{{.Name.UpperCamel}}{{if eq $i 0}} {{printf $lowerTable}} = iota{{end}}{{end}}
+)
+
 // {{.Name.UpperCamel}}Query {{.Name.UpperCamel}}のクエリの構造体
 type {{.Name.UpperCamel}}Query struct {
     db *sql.DB
-    *query.Where{{range .Columns}}
+    whereStruct *query.Where{{range .Columns}}
     {{.Name.UpperCamel}} interface{}{{end}}
 }
 
@@ -21,9 +27,18 @@ func (q *{{.Name.UpperCamel}}Query) createWhereMap() (whereMap map[string]interf
     return
 }
 
+func (q *{{.Name.UpperCamel}}Query) Where(columnType {{printf $lowerTable}}, value interface{}) *{{.Name.UpperCamel}}Query {
+    switch columnType { {{range .Columns}}
+        case {{printf $upperTable}}{{.Name.UpperCamel}}:
+            q.{{.Name.UpperCamel}} = value{{end}}
+    }
+
+    return q
+}
+
 func (q *{{.Name.UpperCamel}}Query) Find() (*{{.Name.UpperCamel}}Table,error) {
     whereMap := q.createWhereMap()
-    whereQuery, whereArgs := q.Where.Where(whereMap)
+    whereQuery, whereArgs := q.whereStruct.Where(whereMap)
 
     args := []interface{}{}
     args = append(args, whereArgs)
