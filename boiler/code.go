@@ -69,7 +69,7 @@ func (c *Code) BoilCode() error {
 		return fmt.Errorf("Make Base Directory Error: %w", err)
 	}
 
-	fileNames := []string{"tables.go", "types.go"}
+	fileNames := []string{"tables.go", "types.go", "db.go"}
 	for _, fileName := range fileNames {
 		fw, err := c.MakeFileWriter(fileName)
 		if err != nil {
