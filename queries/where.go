@@ -14,9 +14,13 @@ func (*Where) Where(whereMap map[string]interface{}) (string, []interface{}) {
 	if len(whereMap) != 0 {
 		where = "WHERE"
 	}
+
+	i := 0
 	for key, val := range whereMap {
-		where += fmt.Sprintf(" %s = ?", key)
+		i++
+		where += fmt.Sprintf(" %s = $%d", key, i)
 		args = append(args, val)
 	}
+
 	return where, args
 }
