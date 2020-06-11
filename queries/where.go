@@ -5,7 +5,7 @@ import (
 )
 
 // Where WHERE関連の構造体
-type Where struct {}
+type Where struct{}
 
 // Where WHEREのクエリを作る
 func (*Where) Where(whereMap map[string]interface{}) (string, []interface{}) {
