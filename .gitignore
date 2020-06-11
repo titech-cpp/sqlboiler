@@ -1,3 +1,4 @@
-main
-docs
+sqlboiler
+sample/docs/dbschema.md
 models
+sample/mysql/data

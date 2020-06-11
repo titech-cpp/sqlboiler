@@ -69,13 +69,26 @@ func (c *Code) BoilCode() error {
 		return fmt.Errorf("Make Base Directory Error: %w", err)
 	}
 
-	fileNames := []string{"tables.go", "types.go"}
+	fileNames := []string{"tables.go", "types.go", "db.go"}
 	for _, fileName := range fileNames {
 		fw, err := c.MakeFileWriter(fileName)
 		if err != nil {
 			return fmt.Errorf("Make File Writer Error(%s): %w", fileName, err)
 		}
 		err = c.MakeFile(fw, fileName, c.Code)
+		if err != nil {
+			return fmt.Errorf("Make File Error(%s): %w", fileName, err)
+		}
+	}
+
+	for _, table := range c.Tables {
+		fileName := fmt.Sprintf("%s_query.go",table.Name.Snake)
+		fw, err := c.MakeFileWriter(fileName)
+		if err != nil {
+			return fmt.Errorf("Make File Writer Error(%s): %w", fileName, err)
+		}
+		fileName = "queries.go"
+		err = c.MakeFile(fw, fileName, table)
 		if err != nil {
 			return fmt.Errorf("Make File Error(%s): %w", fileName, err)
 		}
