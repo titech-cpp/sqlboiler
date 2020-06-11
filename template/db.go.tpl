@@ -14,6 +14,9 @@ func NewDB(sqlDB *sql.DB) *DB {
     return db
 }{{range .Tables}}
 
-func (*DB) {{.Name.UpperCamel}}() *{{.Name.UpperCamel}}Query {
-    return new({{.Name.UpperCamel}}Query)
+func (d *DB) {{.Name.UpperCamel}}() *{{.Name.UpperCamel}}Query {
+    table := new({{.Name.UpperCamel}}Query)
+    table.db = d.db
+
+    return table
 }{{end}}

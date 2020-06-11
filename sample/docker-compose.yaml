@@ -1,0 +1,20 @@
+version: "3"
+services:
+  server:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    environment: 
+      DB_USERNAME: root
+      DB_PASSWORD: pass
+      DB_HOSTNAME: mariadb
+      DB_PORT: 3306
+      DB_DATABASE: sqlboiler_sample
+  mariadb:
+    image: mariadb:10.5.2
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: pass
+    volumes:
+      - ./mysql/init:/docker-entrypoint-initdb.d
+      - ./mysql/data:/var/lib/mysql

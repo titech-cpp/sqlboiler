@@ -1,3 +1,4 @@
 sqlboiler
-docs
+sample/docs/dbschema.md
 models
+sample/mysql/data
