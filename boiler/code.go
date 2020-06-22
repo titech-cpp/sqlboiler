@@ -82,7 +82,7 @@ func (c *Code) BoilCode() error {
 	}
 
 	for _, table := range c.Tables {
-		fileName := fmt.Sprintf("%s_query.go",table.Name.Snake)
+		fileName := fmt.Sprintf("%s_query.go", table.Name.Snake)
 		fw, err := c.MakeFileWriter(fileName)
 		if err != nil {
 			return fmt.Errorf("Make File Writer Error(%s): %w", fileName, err)
@@ -100,35 +100,35 @@ func (c *Code) BoilCode() error {
 func typeParser(sqlType string, isNullable bool) (string, error) {
 	type sqlTypes struct {
 		nonNull string
-		null string
+		null    string
 	}
 	sqlBool := &sqlTypes{
 		nonNull: "bool",
-		null: "nullBool",
+		null:    "nullBool",
 	}
 	sqlString := &sqlTypes{
 		nonNull: "string",
-		null: "nullString",
+		null:    "nullString",
 	}
 	sqlInt8 := &sqlTypes{
 		nonNull: "int8",
-		null: "nullInt32",
+		null:    "nullInt32",
 	}
 	sqlInt16 := &sqlTypes{
 		nonNull: "int16",
-		null: "nullInt32",
+		null:    "nullInt32",
 	}
 	sqlInt32 := &sqlTypes{
 		nonNull: "int32",
-		null: "nullInt32",
+		null:    "nullInt32",
 	}
 	sqlInt64 := &sqlTypes{
 		nonNull: "int64",
-		null: "nullInt64",
+		null:    "nullInt64",
 	}
 	sqlTime := &sqlTypes{
 		nonNull: "timeTime",
-		null: "nullTime",
+		null:    "nullTime",
 	}
 	typeMap := map[string]*sqlTypes{
 		"boolean":   sqlBool,

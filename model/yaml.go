@@ -43,9 +43,9 @@ type yamlColumns = []*YamlColumn
 
 // YamlColumn カラムの構造体
 type YamlColumn struct {
-	Name string
+	Name          string
 	Type          string
-	NoNull          bool `yaml:"no_null"`
+	NoNull        bool `yaml:"no_null"`
 	AutoIncrement bool `yaml:"auto_increment"`
 	Key           string
 	Default       string
