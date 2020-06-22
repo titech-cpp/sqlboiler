@@ -26,7 +26,7 @@ func NewCode(basePath string, yaml *model.Yaml) (*Code, error) {
 			if err != nil {
 				return nil, fmt.Errorf("Name Detail Constructor(%s.%s) Error: %w", key, v.Name, err)
 			}
-			goType, err := typeParser(v.Type)
+			goType, err := typeParser(v.Type, !v.NoNull)
 			if err != nil {
 				return nil, fmt.Errorf("Type Parse Error(%s.%s): %w", key, v.Name, err)
 			}
@@ -34,7 +34,7 @@ func NewCode(basePath string, yaml *model.Yaml) (*Code, error) {
 			column := &model.CodeColumn{
 				Name:     name,
 				Type:     goType,
-				Null:     v.Null,
+				Null:     !v.NoNull,
 				ReadOnly: v.AutoIncrement,
 			}
 			columns = append(columns, column)
@@ -97,26 +97,58 @@ func (c *Code) BoilCode() error {
 	return nil
 }
 
-func typeParser(sqlType string) (string, error) {
-	typeMap := map[string]string{
-		"boolean":   "bool",
-		"char":      "string",
-		"varchar":   "string",
-		"binary":    "string",
-		"varbinary": "string",
-		"blob":      "blob",
-		"text":      "string",
-		"integer":   "int32",
-		"int":       "int32",
-		"bigint":    "int64",
-		"mediumint": "int32",
-		"smallint":  "int16",
-		"tinyint":   "int8",
-		"date":      "timeTime",
-		"datetime":  "timeTime",
-		"timestamp": "timeTime",
-		"time":      "timeTime",
-		"year":      "timeTime",
+func typeParser(sqlType string, isNullable bool) (string, error) {
+	type sqlTypes struct {
+		nonNull string
+		null string
+	}
+	sqlBool := &sqlTypes{
+		nonNull: "bool",
+		null: "nullBool",
+	}
+	sqlString := &sqlTypes{
+		nonNull: "string",
+		null: "nullString",
+	}
+	sqlInt8 := &sqlTypes{
+		nonNull: "int8",
+		null: "nullInt32",
+	}
+	sqlInt16 := &sqlTypes{
+		nonNull: "int16",
+		null: "nullInt32",
+	}
+	sqlInt32 := &sqlTypes{
+		nonNull: "int32",
+		null: "nullInt32",
+	}
+	sqlInt64 := &sqlTypes{
+		nonNull: "int64",
+		null: "nullInt64",
+	}
+	sqlTime := &sqlTypes{
+		nonNull: "timeTime",
+		null: "nullTime",
+	}
+	typeMap := map[string]*sqlTypes{
+		"boolean":   sqlBool,
+		"char":      sqlString,
+		"varchar":   sqlString,
+		"binary":    sqlString,
+		"varbinary": sqlString,
+		"blob":      sqlString,
+		"text":      sqlString,
+		"integer":   sqlInt32,
+		"int":       sqlInt32,
+		"bigint":    sqlInt64,
+		"mediumint": sqlInt32,
+		"smallint":  sqlInt16,
+		"tinyint":   sqlInt8,
+		"date":      sqlTime,
+		"datetime":  sqlTime,
+		"timestamp": sqlTime,
+		"time":      sqlTime,
+		"year":      sqlTime,
 	}
 
 	var buf bytes.Buffer
@@ -141,5 +173,8 @@ func typeParser(sqlType string) (string, error) {
 		return "", fmt.Errorf("Invalid Type %s", sqlType)
 	}
 
-	return goType, nil
+	if isNullable {
+		return goType.null, nil
+	}
+	return goType.nonNull, nil
 }

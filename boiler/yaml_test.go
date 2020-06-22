@@ -25,7 +25,7 @@ func TestReadYaml(t *testing.T) {
 				{
 					Name: "user_id",
 					Type: "int(11)",
-					Null: false,
+					NoNull: false,
 					AutoIncrement: false,
 					Key: "",
 					Default: "",

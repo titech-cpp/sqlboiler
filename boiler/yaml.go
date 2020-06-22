@@ -49,7 +49,7 @@ func newTestYaml() *Yaml {
 					{
 						Name: "testa",
 						Type:          "int(1)",
-						Null:          true,
+						NoNull:          false,
 						AutoIncrement: true,
 						Key:           "PRI",
 						Default:       "default",
@@ -57,7 +57,7 @@ func newTestYaml() *Yaml {
 					{
 						Name: "testb",
 						Type:          "int",
-						Null:          false,
+						NoNull:          true,
 						AutoIncrement: false,
 						Key:           "",
 						Default:       "",
