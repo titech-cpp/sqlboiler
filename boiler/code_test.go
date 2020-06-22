@@ -27,7 +27,7 @@ func TestCode(t *testing.T) {
 							LowerCamel: "testa",
 							Snake:      "testa",
 						},
-						Type:     "int32",
+						Type:     "nullInt32",
 						Null:     true,
 						ReadOnly: true,
 					},
