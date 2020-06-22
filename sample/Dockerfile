@@ -5,7 +5,7 @@ FROM golang:1.14.4-alpine AS build
 RUN --mount=type=cache,target=/var/cache/apk apk add --update git
 
 WORKDIR /go/src/github.com/titech-cpp/sqlboiler/sample
-COPY go.* ./
+COPY go.mod go.sum ./
 RUN go mod download
 
 COPY ./ ./

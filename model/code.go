@@ -50,12 +50,23 @@ func (c *CodeTable) Check(ct *CodeTable) error {
 // CodeColumn カラムの構造体
 type CodeColumn struct {
 	Name     *NameDetail
-	Type     string
+	Type     *CodeType
 	Null     bool
 	ReadOnly bool
 }
 
 // Check 同一か確認
 func (c *CodeColumn) Check(cc *CodeColumn) bool {
-	return c.Name.Check(cc.Name) && c.Type == cc.Type && c.Null == cc.Null && c.ReadOnly == cc.ReadOnly
+	return c.Name.Check(cc.Name) && c.Type.Check(cc.Type) && c.Null == cc.Null && c.ReadOnly == cc.ReadOnly
+}
+
+// CodeType 型の構造体
+type CodeType struct {
+	Code string
+	SQL  string
+}
+
+// Check 同一か確認
+func (c *CodeType) Check(ct *CodeType) bool {
+	return c.Code == ct.Code && c.SQL == ct.SQL
 }

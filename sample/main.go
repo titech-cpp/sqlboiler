@@ -17,10 +17,8 @@ func main() {
 
 	db := models.NewDB(_db)
 
-	user, err := db.Users().Find()
+	err = db.Migrate()
 	if err != nil {
-		panic(fmt.Errorf("Find Message Error: %w", err))
+		panic(fmt.Errorf("Migrate Error: %w", err))
 	}
-
-	fmt.Printf("%#v", user)
 }
