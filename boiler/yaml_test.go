@@ -23,12 +23,12 @@ func TestReadYaml(t *testing.T) {
 		Tables: map[string][]*model.YamlColumn{
 			"messages": {
 				{
-					Name: "user_id",
-					Type: "int(11)",
-					Null: false,
+					Name:          "user_id",
+					Type:          "int(11)",
+					NoNull:        false,
 					AutoIncrement: false,
-					Key: "",
-					Default: "",
+					Key:           "",
+					Default:       "",
 				},
 			},
 		},

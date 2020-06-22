@@ -27,7 +27,7 @@ func TestCode(t *testing.T) {
 							LowerCamel: "testa",
 							Snake:      "testa",
 						},
-						Type:     "int32",
+						Type:     "nullInt32",
 						Null:     true,
 						ReadOnly: true,
 					},
@@ -57,7 +57,7 @@ func TestCode(t *testing.T) {
 	}
 
 	expectedType := "bool"
-	goType, err := typeParser("boolean")
+	goType, err := typeParser("boolean", false)
 	if err != nil {
 		t.Fatalf("Unexpected TypeParser Error: %#v", err)
 	}
@@ -65,7 +65,7 @@ func TestCode(t *testing.T) {
 		t.Fatalf("Invalid Parsed Type %s, Expected %s", goType, expectedType)
 	}
 
-	_, err = typeParser("test")
+	_, err = typeParser("test", false)
 	if err == nil {
 		t.Fatalf("Unexpected No Error: %s", goType)
 	}

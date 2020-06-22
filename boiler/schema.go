@@ -27,7 +27,7 @@ func NewSchema(basePath string, yaml *model.Yaml) *Schema {
 			column := model.SchemaColumn{
 				Name:    v.Name,
 				Type:    v.Type,
-				Null:    v.Null,
+				Null:    !v.NoNull,
 				Key:     v.Key,
 				Default: v.Default,
 				Extra:   extra,

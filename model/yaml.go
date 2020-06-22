@@ -43,15 +43,15 @@ type yamlColumns = []*YamlColumn
 
 // YamlColumn カラムの構造体
 type YamlColumn struct {
-	Name string
+	Name          string
 	Type          string
-	Null          bool
-	AutoIncrement bool
+	NoNull        bool `yaml:"no_null"`
+	AutoIncrement bool `yaml:"auto_increment"`
 	Key           string
 	Default       string
 }
 
 // Check 同一か確認
 func (y *YamlColumn) Check(yc *YamlColumn) bool {
-	return y.Name == yc.Name || y.Type == yc.Type && y.Null == yc.Null && y.AutoIncrement == yc.AutoIncrement && y.Key == yc.Key && y.Default == yc.Default
+	return y.Name == yc.Name || y.Type == yc.Type && y.NoNull == yc.NoNull && y.AutoIncrement == yc.AutoIncrement && y.Key == yc.Key && y.Default == yc.Default
 }

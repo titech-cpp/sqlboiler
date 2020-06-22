@@ -47,17 +47,17 @@ func newTestYaml() *Yaml {
 			Tables: map[string][]*model.YamlColumn{
 				"test_test": {
 					{
-						Name: "testa",
+						Name:          "testa",
 						Type:          "int(1)",
-						Null:          true,
+						NoNull:        false,
 						AutoIncrement: true,
 						Key:           "PRI",
 						Default:       "default",
 					},
 					{
-						Name: "testb",
+						Name:          "testb",
 						Type:          "int",
-						Null:          false,
+						NoNull:        true,
 						AutoIncrement: false,
 						Key:           "",
 						Default:       "",
