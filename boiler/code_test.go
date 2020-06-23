@@ -27,7 +27,10 @@ func TestCode(t *testing.T) {
 							LowerCamel: "testa",
 							Snake:      "testa",
 						},
-						Type:     "nullInt32",
+						Type: &model.CodeType{
+							Code: "nullInt32",
+							SQL:  "int(1)",
+						},
 						Null:     true,
 						ReadOnly: true,
 					},
@@ -37,7 +40,10 @@ func TestCode(t *testing.T) {
 							LowerCamel: "testb",
 							Snake:      "testb",
 						},
-						Type:     "int32",
+						Type: &model.CodeType{
+							Code: "int32",
+							SQL:  "int",
+						},
 						Null:     false,
 						ReadOnly: false,
 					},

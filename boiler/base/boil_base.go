@@ -62,7 +62,13 @@ func (b *BoilBase) MakeFile(file io.WriteCloser, tmpNameBase string, vars interf
 	}
 	tmpFile := builder.String()
 
-	tmp, err := template.New(tmpNameBase).Parse(tmpFile)
+	funcMap := map[string]interface{}{
+		"isLast": func(i int, l int) bool {
+			return i == l - 1
+		},
+	}
+
+	tmp, err := template.New(tmpNameBase).Funcs(funcMap).Parse(tmpFile)
 	if err != nil {
 		return fmt.Errorf("Parse Template Error: %w", err)
 	}

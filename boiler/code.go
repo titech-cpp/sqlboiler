@@ -26,14 +26,17 @@ func NewCode(basePath string, yaml *model.Yaml) (*Code, error) {
 			if err != nil {
 				return nil, fmt.Errorf("Name Detail Constructor(%s.%s) Error: %w", key, v.Name, err)
 			}
-			goType, err := typeParser(v.Type, !v.NoNull)
+			codeType, err := typeParser(v.Type, !v.NoNull)
 			if err != nil {
 				return nil, fmt.Errorf("Type Parse Error(%s.%s): %w", key, v.Name, err)
 			}
 
 			column := &model.CodeColumn{
-				Name:     name,
-				Type:     goType,
+				Name: name,
+				Type: &model.CodeType{
+					Code: codeType,
+					SQL:  v.Type,
+				},
 				Null:     !v.NoNull,
 				ReadOnly: v.AutoIncrement,
 			}
@@ -69,7 +72,7 @@ func (c *Code) BoilCode() error {
 		return fmt.Errorf("Make Base Directory Error: %w", err)
 	}
 
-	fileNames := []string{"tables.go", "types.go", "db.go"}
+	fileNames := []string{"tables.go", "types.go", "db.go", "migrate.go"}
 	for _, fileName := range fileNames {
 		fw, err := c.MakeFileWriter(fileName)
 		if err != nil {
