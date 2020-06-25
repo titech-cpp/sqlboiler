@@ -21,7 +21,7 @@ func TestSchema(t *testing.T) {
 						Name:    "testa",
 						Type:    "int(1)",
 						Null:    true,
-						Key:     "PRI",
+						Key:     []string{"PRI"},
 						Default: "default",
 						Extra: []string{
 							"AUTO_INCREMENT",
