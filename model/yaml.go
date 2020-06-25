@@ -33,9 +33,17 @@ type YamlColumn struct {
 	AutoIncrement bool `yaml:"auto_increment"`
 	Key           string
 	Default       string
+	ForeignKey    map[string]string `yaml:"foreign_key"`
 }
 
 // Check 同一か確認
 func (y *YamlColumn) Check(yc *YamlColumn) bool {
-	return y.Name == yc.Name || y.Type == yc.Type && y.NoNull == yc.NoNull && y.AutoIncrement == yc.AutoIncrement && y.Key == yc.Key && y.Default == yc.Default
+	for key, value := range y.ForeignKey {
+		val, ok := yc.ForeignKey[key]
+		if !ok || val != value {
+			return false
+		}
+	}
+
+	return y.Name == yc.Name && y.Type == yc.Type && y.NoNull == yc.NoNull && y.AutoIncrement == yc.AutoIncrement && y.Key == yc.Key && y.Default == yc.Default && len(y.ForeignKey) == len(yc.ForeignKey)
 }
