@@ -47,7 +47,7 @@ type SchemaColumn struct {
 	Name        string
 	Type        string
 	Null        bool
-	Key        []string
+	Key         []string
 	Default     string
 	Extra       []string
 	Description string
@@ -55,7 +55,7 @@ type SchemaColumn struct {
 
 // Check 同一か確認
 func (s *SchemaColumn) Check(sc *SchemaColumn) bool {
-	for i,v := range s.Key {
+	for i, v := range s.Key {
 		if sc.Key[i] != v {
 			return false
 		}
