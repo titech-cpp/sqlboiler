@@ -8,10 +8,6 @@ type Yaml struct {
 
 // Check 同一か確認
 func (y *Yaml) Check(yml *Yaml) bool {
-	if !y.DB.Check(&yml.DB) {
-		return false
-	}
-
 	for key, value := range y.Tables {
 		table, ok := yml.Tables[key]
 		if !ok {
@@ -24,19 +20,7 @@ func (y *Yaml) Check(yml *Yaml) bool {
 		}
 	}
 
-	for key, value := range yml.Tables {
-		table, ok := y.Tables[key]
-		if !ok {
-			return false
-		}
-		for i, val := range table {
-			if !val.Check(value[i]) {
-				return false
-			}
-		}
-	}
-
-	return true
+	return y.DB.Check(&yml.DB) && len(y.Tables) == len(yml.Tables)
 }
 
 type yamlColumns = []*YamlColumn
