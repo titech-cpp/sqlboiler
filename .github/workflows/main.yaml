@@ -60,7 +60,7 @@ jobs:
       - name: golangci-lint
         uses: reviewdog/action-golangci-lint@v1
         with:
-          golangci_lint_flags: "--disable-all -E golint gofmt --out-format=line-number"
+          golangci_lint_flags: "--disable-all -E golint --out-format=line-number"
           reporter: github-pr-review
   test:
     name: Test
