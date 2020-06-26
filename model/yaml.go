@@ -8,10 +8,6 @@ type Yaml struct {
 
 // Check 同一か確認
 func (y *Yaml) Check(yml *Yaml) bool {
-	if !y.DB.Check(&yml.DB) {
-		return false
-	}
-
 	for key, value := range y.Tables {
 		table, ok := yml.Tables[key]
 		if !ok {
@@ -24,19 +20,7 @@ func (y *Yaml) Check(yml *Yaml) bool {
 		}
 	}
 
-	for key, value := range yml.Tables {
-		table, ok := y.Tables[key]
-		if !ok {
-			return false
-		}
-		for i, val := range table {
-			if !val.Check(value[i]) {
-				return false
-			}
-		}
-	}
-
-	return true
+	return y.DB.Check(&yml.DB) && len(y.Tables) == len(yml.Tables)
 }
 
 type yamlColumns = []*YamlColumn
@@ -49,9 +33,17 @@ type YamlColumn struct {
 	AutoIncrement bool `yaml:"auto_increment"`
 	Key           string
 	Default       string
+	ForeignKey    map[string]string `yaml:"foreign_key"`
 }
 
 // Check 同一か確認
 func (y *YamlColumn) Check(yc *YamlColumn) bool {
-	return y.Name == yc.Name || y.Type == yc.Type && y.NoNull == yc.NoNull && y.AutoIncrement == yc.AutoIncrement && y.Key == yc.Key && y.Default == yc.Default
+	for key, value := range y.ForeignKey {
+		val, ok := yc.ForeignKey[key]
+		if !ok || val != value {
+			return false
+		}
+	}
+
+	return y.Name == yc.Name && y.Type == yc.Type && y.NoNull == yc.NoNull && y.AutoIncrement == yc.AutoIncrement && y.Key == yc.Key && y.Default == yc.Default && len(y.ForeignKey) == len(yc.ForeignKey)
 }

@@ -24,11 +24,19 @@ func NewSchema(basePath string, yaml *model.Yaml) *Schema {
 				extra = append(extra, "AUTO_INCREMENT")
 			}
 
+			keys := []string{}
+			if len(v.Key) != 0 {
+				keys = append(keys, v.Key)
+			}
+			if len(v.ForeignKey) != 0 {
+				keys = append(keys, "MUL")
+			}
+
 			column := model.SchemaColumn{
 				Name:    v.Name,
 				Type:    v.Type,
 				Null:    !v.NoNull,
-				Key:     v.Key,
+				Key:     keys,
 				Default: v.Default,
 				Extra:   extra,
 			}
