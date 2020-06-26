@@ -41,6 +41,8 @@ jobs:
             ${{ runner.os }}-go-build-${{ github.ref }}-
             ${{ runner.os }}-go-build
       - run: go get github.com/rakyll/statik
+      - name: Add PATH
+        run: echo "::add-path::$(go env GOPATH)/bin"
       - run: make build
       - run: make all
   lint:
