@@ -33,6 +33,13 @@ func TestCode(t *testing.T) {
 						},
 						Null:     true,
 						ReadOnly: true,
+						Key: &model.CodeKey{
+							Primary: true,
+							Unique:  false,
+							Foreign: []*model.CodeForeign{},
+						},
+						AutoIncrement: true,
+						Default:       "default",
 					},
 					{
 						Name: &model.NameDetail{
@@ -46,6 +53,13 @@ func TestCode(t *testing.T) {
 						},
 						Null:     false,
 						ReadOnly: false,
+						Key: &model.CodeKey{
+							Primary: false,
+							Unique:  false,
+							Foreign: []*model.CodeForeign{},
+						},
+						AutoIncrement: false,
+						Default:       "",
 					},
 				},
 			},

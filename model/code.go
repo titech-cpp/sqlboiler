@@ -49,15 +49,18 @@ func (c *CodeTable) Check(ct *CodeTable) error {
 
 // CodeColumn カラムの構造体
 type CodeColumn struct {
-	Name     *NameDetail
-	Type     *CodeType
-	Null     bool
-	ReadOnly bool
+	Name          *NameDetail
+	Type          *CodeType
+	Null          bool
+	ReadOnly      bool
+	Key           *CodeKey
+	AutoIncrement bool
+	Default       string
 }
 
 // Check 同一か確認
 func (c *CodeColumn) Check(cc *CodeColumn) bool {
-	return c.Name.Check(cc.Name) && c.Type.Check(cc.Type) && c.Null == cc.Null && c.ReadOnly == cc.ReadOnly
+	return c.Name.Check(cc.Name) && c.Type.Check(cc.Type) && c.Null == cc.Null && c.ReadOnly == cc.ReadOnly && c.Key.Check(cc.Key) && c.AutoIncrement == cc.AutoIncrement && c.Default == cc.Default
 }
 
 // CodeType 型の構造体
@@ -69,4 +72,33 @@ type CodeType struct {
 // Check 同一か確認
 func (c *CodeType) Check(ct *CodeType) bool {
 	return c.Code == ct.Code && c.SQL == ct.SQL
+}
+
+// CodeKey キーの構造体
+type CodeKey struct {
+	Primary bool
+	Unique  bool
+	Foreign []*CodeForeign
+}
+
+// Check 同一か確認
+func (c *CodeKey) Check(ck *CodeKey) bool {
+	for i, v := range c.Foreign {
+		if !ck.Foreign[i].Check(v) {
+			return false
+		}
+	}
+
+	return c.Primary == ck.Primary && c.Unique == ck.Unique && len(c.Foreign) == len(ck.Foreign)
+}
+
+// CodeForeign 外部キーの構造体
+type CodeForeign struct {
+	Table  string
+	Column string
+}
+
+// Check 同一か確認
+func (c *CodeForeign) Check(cf *CodeForeign) bool {
+	return c.Table == cf.Table && c.Column == cf.Column
 }
