@@ -52,6 +52,7 @@ func NewCode(basePath string, yaml *model.Yaml) (*Code, error) {
 					Unique: v.Key=="UNI",
 					Foreign: foreigns,
 				},
+				AutoIncrement: v.AutoIncrement,
 				Default: v.Default,
 			}
 			columns = append(columns, column)
