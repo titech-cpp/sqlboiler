@@ -32,9 +32,13 @@ func NewBoilBase(basePath string) *BoilBase {
 
 // MakeBaseDir ファイル作成先のディレクトリの作成
 func (b *BoilBase) MakeBaseDir() error {
-	err := os.MkdirAll(b.basePath, 0777)
+	err := os.RemoveAll(b.basePath)
 	if err != nil {
-		return err
+		return fmt.Errorf("Remove Files Error: %w", err)
+	}
+	err = os.MkdirAll(b.basePath, 0777)
+	if err != nil {
+		return fmt.Errorf("Make Directory Error: %w", err)
 	}
 
 	return nil
@@ -62,6 +66,24 @@ func (b *BoilBase) MakeFile(file io.WriteCloser, tmpNameBase string, vars interf
 	}
 	tmpFile := builder.String()
 
+	defines := []string{"select"}
+	defineFiles := make([]string, 0, len(defines))
+	for _, v := range defines {
+		fp, err = FS.Open("/_" + v + ".tpl")
+		if err != nil {
+			return fmt.Errorf("Statik Open Error: %w", err)
+		}
+		defer fp.Close()
+
+		var builder strings.Builder
+		_, err = io.Copy(&builder, fp)
+		if err != nil {
+			return fmt.Errorf("Read File Error(%s): %w", v, err)
+		}
+		file := builder.String()
+		defineFiles = append(defineFiles, file)
+	}
+
 	funcMap := map[string]interface{}{
 		"isLast": func(i int, l int) bool {
 			return i == l-1
@@ -71,6 +93,12 @@ func (b *BoilBase) MakeFile(file io.WriteCloser, tmpNameBase string, vars interf
 	tmp, err := template.New(tmpNameBase).Funcs(funcMap).Parse(tmpFile)
 	if err != nil {
 		return fmt.Errorf("Parse Template Error: %w", err)
+	}
+	for i, v := range defineFiles {
+		tmp, err = tmp.Parse(v)
+		if err != nil {
+			return fmt.Errorf("Parse Template Error(%s): %w", defines[i], err)
+		}
 	}
 
 	err = tmp.Execute(file, vars)
