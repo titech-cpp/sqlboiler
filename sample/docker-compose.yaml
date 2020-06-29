@@ -10,6 +10,7 @@ services:
       DB_HOSTNAME: mariadb
       DB_PORT: 3306
       DB_DATABASE: sqlboiler_sample
+    restart: always
   mariadb:
     image: mariadb:10.5.2
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
