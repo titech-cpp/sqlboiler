@@ -27,9 +27,9 @@ func TestBoilBase(t *testing.T) {
 						Name: nameDetail,
 						Type: &model.CodeType{
 							Code: "test",
-							SQL: "test",
+							SQL:  "test",
 						},
-						Null: true,
+						Null:     true,
 						ReadOnly: true,
 					},
 				},
@@ -42,16 +42,16 @@ type TestTable struct {
     Test test
 }
 `
-	pr,pw := io.Pipe()
+	pr, pw := io.Pipe()
 
-	errCh :=make(chan error)
+	errCh := make(chan error)
 	go func() {
 		err = boilBase.MakeFile(pw, "tables.go", code)
 		errCh <- err
 	}()
 
 	var builder strings.Builder
-	_,err = io.Copy(&builder, pr)
+	_, err = io.Copy(&builder, pr)
 	if err != nil {
 		t.Fatalf("Unexpected Copy Error: %#v", err)
 	}

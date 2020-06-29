@@ -31,7 +31,7 @@ func NewCode(basePath string, yaml *model.Yaml) (*Code, error) {
 				return nil, fmt.Errorf("Type Parse Error(%s.%s): %w", key, v.Name, err)
 			}
 			var foreigns []*model.CodeForeign
-			for k,yamlForeign := range v.ForeignKey {
+			for k, yamlForeign := range v.ForeignKey {
 				foreign := new(model.CodeForeign)
 				foreign.Table = k
 				foreign.Column = yamlForeign
@@ -48,12 +48,12 @@ func NewCode(basePath string, yaml *model.Yaml) (*Code, error) {
 				Null:     !v.NoNull,
 				ReadOnly: v.AutoIncrement,
 				Key: &model.CodeKey{
-					Primary: v.Key=="PRI",
-					Unique: v.Key=="UNI",
+					Primary: v.Key == "PRI",
+					Unique:  v.Key == "UNI",
 					Foreign: foreigns,
 				},
 				AutoIncrement: v.AutoIncrement,
-				Default: v.Default,
+				Default:       v.Default,
 			}
 			columns = append(columns, column)
 		}

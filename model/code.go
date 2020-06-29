@@ -49,13 +49,13 @@ func (c *CodeTable) Check(ct *CodeTable) error {
 
 // CodeColumn カラムの構造体
 type CodeColumn struct {
-	Name     *NameDetail
-	Type     *CodeType
-	Null     bool
-	ReadOnly bool
-	Key      *CodeKey
+	Name          *NameDetail
+	Type          *CodeType
+	Null          bool
+	ReadOnly      bool
+	Key           *CodeKey
 	AutoIncrement bool
-	Default string
+	Default       string
 }
 
 // Check 同一か確認
@@ -77,13 +77,13 @@ func (c *CodeType) Check(ct *CodeType) bool {
 // CodeKey キーの構造体
 type CodeKey struct {
 	Primary bool
-	Unique bool
+	Unique  bool
 	Foreign []*CodeForeign
 }
 
 // Check 同一か確認
 func (c *CodeKey) Check(ck *CodeKey) bool {
-	for i,v := range c.Foreign {
+	for i, v := range c.Foreign {
 		if !ck.Foreign[i].Check(v) {
 			return false
 		}
@@ -94,7 +94,7 @@ func (c *CodeKey) Check(ck *CodeKey) bool {
 
 // CodeForeign 外部キーの構造体
 type CodeForeign struct {
-	Table string
+	Table  string
 	Column string
 }
 

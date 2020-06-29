@@ -31,7 +31,7 @@ func NewBoilBase(basePath string) *BoilBase {
 }
 
 // MakeBaseDir ファイル作成先のディレクトリの作成
-func (b * BoilBase) MakeBaseDir() error {
+func (b *BoilBase) MakeBaseDir() error {
 	err := os.MkdirAll(b.basePath, 0777)
 	if err != nil {
 		return err
@@ -64,7 +64,7 @@ func (b *BoilBase) MakeFile(file io.WriteCloser, tmpNameBase string, vars interf
 
 	funcMap := map[string]interface{}{
 		"isLast": func(i int, l int) bool {
-			return i == l - 1
+			return i == l-1
 		},
 	}
 

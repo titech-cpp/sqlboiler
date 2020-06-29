@@ -35,11 +35,11 @@ func TestCode(t *testing.T) {
 						ReadOnly: true,
 						Key: &model.CodeKey{
 							Primary: true,
-							Unique: false,
+							Unique:  false,
 							Foreign: []*model.CodeForeign{},
 						},
 						AutoIncrement: true,
-						Default: "default",
+						Default:       "default",
 					},
 					{
 						Name: &model.NameDetail{
@@ -55,11 +55,11 @@ func TestCode(t *testing.T) {
 						ReadOnly: false,
 						Key: &model.CodeKey{
 							Primary: false,
-							Unique: false,
+							Unique:  false,
 							Foreign: []*model.CodeForeign{},
 						},
 						AutoIncrement: false,
-						Default: "",
+						Default:       "",
 					},
 				},
 			},
