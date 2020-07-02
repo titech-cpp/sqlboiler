@@ -186,8 +186,6 @@ github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXf
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/subosito/gotenv v1.2.0 h1:Slr1R9HxAlEKefgq5jn9U+DnETlIUa6HfgEzj0g5d7s=
 github.com/subosito/gotenv v1.2.0/go.mod h1:N0PQaV/YGNqwC0u51sEeR/aUtSLEXKX9iv69rRypqCw=
-github.com/titech-cpp/sqlboiler v0.0.0-20200609165003-94b46e3b2a2d h1:LMmN61NzlPqcIaUzBiKDCsorLHMrnUEL0+r+kDMM37w=
-github.com/titech-cpp/sqlboiler v0.0.0-20200609165003-94b46e3b2a2d/go.mod h1:RB7wBauC2VHCxsvuvaTJPXQzTYUrt/xUD24LJkIOm9E=
 github.com/titech-cpp/sqlboiler v0.0.0-20200611063416-78e1dbca601c h1:UZsJZH5TgY+EEq6pvfoEhKpMCZeB3cS0bxqTsnOcqV4=
 github.com/titech-cpp/sqlboiler v0.0.0-20200611063416-78e1dbca601c/go.mod h1:RB7wBauC2VHCxsvuvaTJPXQzTYUrt/xUD24LJkIOm9E=
 github.com/tmc/grpc-websocket-proxy v0.0.0-20190109142713-0ad062ec5ee5/go.mod h1:ncp9v5uamzpCO7NfCPTXjqaC+bZgJeR0sMTm6dMHP7U=
