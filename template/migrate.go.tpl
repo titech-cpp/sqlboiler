@@ -137,6 +137,14 @@ func (d *DB) Migrate() error {
         }
     }
 
+    for k,_ := range nowTableMap {
+        _,ok := newTableMap[k]
+        if !ok {
+            cmd := fmt.Sprintf("DROP TABLE %s", k)
+            cmds = append(cmds, cmd)
+        }
+    }
+
     for _,cmd := range cmds {
         _, err = tx.ExecContext(ctx, cmd)
         if err != nil {
