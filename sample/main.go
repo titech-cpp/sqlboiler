@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"os"
 
+	"sample/models"
+
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/titech-cpp/sqlboiler/sample/models"
 )
 
 func main() {

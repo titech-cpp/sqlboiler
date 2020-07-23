@@ -5,6 +5,7 @@ tables:
   users:
     - name: id
       type: int(11)
+      no_null: true
       auto_increment: true
       key: PRI
     - name: name
@@ -27,6 +28,7 @@ tables:
   messages:
     - name: id
       type: varchar(36)
+      no_null: true
       key: PRI
     - name: user_id
       type: int(11)
@@ -53,6 +55,7 @@ tables:
   follows:
     - name: id
       type: int(11)
+      no_null: true
       auto_increment: true
       key: PRI
     - name: user_id
@@ -75,6 +78,7 @@ tables:
   favorites:
     - name: id
       type: int(11)
+      no_null: true
       auto_increment: true
       key: PRI
     - name: user_id
