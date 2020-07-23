@@ -4,7 +4,7 @@ import (
     "fmt"
     "context"
 
-    "github.com/titech-cpp/sqlboiler/queries"
+    "sample/models/query"
 )
 
 func (d *DB) Migrate() error {
@@ -27,11 +27,11 @@ func (d *DB) Migrate() error {
     }
 
     newTableMap := map[string]query.Table{
-{{range .Tables}}        "{{.Name.Snake}}": query.Table{
+{{range .Tables}}        "{{.Name.Snake}}": {
 {{range .Columns}}            &query.Column{
                 Field: "{{.Name.Snake}}",
                 Type: "{{.Type.SQL}}",
-                Null: "{{.Null}}",
+                Null: {{.Null}},
                 Key: []string{
 {{if .Key.Primary}}                    "PRI",
 {{end}}{{if .Key.Unique}}                    "UNI",
@@ -45,13 +45,13 @@ func (d *DB) Migrate() error {
 {{end}}    }
 
     cmds := []string{}
-    for k,v := range nowTableMap {
-        t, ok := newTableMap[k]
+    for k,v := range newTableMap {
+        t, ok := nowTableMap[k]
         if !ok {
             cmd := "CREATE TABLE IF NOT EXISTS " + k + " ("
-            for i, val := range t {
+            for i, val := range v {
                 null := ""
-                if val.Null == "NO" {
+                if !val.Null {
                     null = " NOT NULL"
                 }
                 key := ""
@@ -75,69 +75,65 @@ func (d *DB) Migrate() error {
                     defaultVal = " DEFAULT " + val.Default
                 }
                 cmd += fmt.Sprintf("%s %s%s%s%s%s", val.Field, val.Type, null, key, autoIncrement, defaultVal)
-                if i != len(t)-1 {
+                if i != len(v)-1 {
                     cmd += ","
                 } else {
                     cmd += ")"
                 }
             }
             cmds = append(cmds, cmd)
-        }
+        } else {
+            addColumns, alterColumns, changeNullColumns, delColumns, addKeys, delKeys := t.GetDiff(v)
 
-        addColumns, alterColumns, changeNullColumns, delColumns, addKeys, delKeys := v.GetDiff(t)
-
-        for _,val := range addColumns {
-            null := ""
-            if val.Null == "NO" {
-                null = " NOT NULL"
+            for _,val := range addColumns {
+                null := ""
+                if !val.Null {
+                    null = " NOT NULL"
+                }
+                cmd := fmt.Sprintf("ALTER TABLE %s ADD %s %s%s", k, val.Field, val.Type, null)
+                cmds = append(cmds, cmd)
             }
-            cmd := fmt.Sprintf("ALTER TABLE %s ADD %s %s%s", k, val.Field, val.Type, null)
-            cmds = append(cmds, cmd)
-        }
 
-        for _, val := range delColumns {
-            cmd := fmt.Sprintf("ALTER TABLE %s DROP %s", k, val.Field)
-            cmds = append(cmds, cmd)
-        }
-
-        for _, val := range alterColumns {
-            cmd := fmt.Sprintf("ALTER TABLE %s ALTER COLUMN %s %s", k, val.Field, val.Type)
-            cmds = append(cmds, cmd)
-        }
-
-        for _,val := range changeNullColumns {
-            null := ""
-            if val.Null == "NO" {
-                null = "NOT NULL"
-            } else {
-                null = "NULL"
+            for _, val := range delColumns {
+                cmd := fmt.Sprintf("ALTER TABLE %s DROP %s", k, val.Field)
+                cmds = append(cmds, cmd)
             }
-            cmd := fmt.Sprintf("ALTER TABLE %s ALTER COLUMN %s SET %s", k, val.Field, null)
-            cmds = append(cmds, cmd)
-        }
 
-        for _,val := range addKeys {
-            var keyType string
-            switch keyType {
-            case "PRI":
-                keyType = "PRIMARY KEY"
-            case "UNI":
-                keyType = "UNIQUE"
+            changeKeyColumns := []*query.Column{}
+            for _, val := range append(addKeys, delKeys...) {
+                changeKeyColumns = append(changeKeyColumns, val.Column)
             }
-            cmd := fmt.Sprintf("ALTER TABLE %s ADD CONSTRAINT %s %s (%s)", k, val.Column, keyType, val.Column)
-            cmds = append(cmds, cmd)
-        }
 
-        for _,val := range delKeys {
-            var keyType string
-            switch keyType {
-            case "PRI":
-                keyType = "PRIMARY KEY"
-            case "UNI":
-                keyType = "UNIQUE"
+            for _, val := range append(append(alterColumns, changeNullColumns...), changeKeyColumns...) {
+                null := ""
+                if !val.Null {
+                    null = " NOT NULL"
+                }
+                key := ""
+                for _,value := range val.Key {
+                    switch value {
+                    case "PRI":
+                        key += " PRIMARY KEY"
+                    case "UNI":
+                        key += " UNIQUE"
+                    }
+                }
+                autoIncrement := ""
+                for _, value := range val.Extra {
+                    switch value {
+                    case "auto_increment":
+                        autoIncrement = " AUTO_INCREMENT"
+                    }
+                }
+                defaultVal := ""
+                if len(val.Default) != 0 {
+                    defaultVal = " DEFAULT " + val.Default
+                }
+                columnDefinition := fmt.Sprintf("%s %s%s%s%s%s", val.Field, val.Type, null, key, autoIncrement, defaultVal)
+
+                cmd := fmt.Sprintf("ALTER TABLE %s MODIFY %s", k, columnDefinition)
+                cmds = append(cmds, cmd)
             }
-            cmd := fmt.Sprintf("ALTER TABLE %s ADD CONSTRAINT %s %s (%s)", k, val.Column, keyType, val.Column)
-            cmds = append(cmds, cmd)
         }
     }
 

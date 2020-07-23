@@ -11,6 +11,7 @@ import (
 // Code コードの構造体
 type Code struct {
 	base.BoilerBase
+	base.CopyerBase
 	*model.Code
 }
 
@@ -73,8 +74,10 @@ func NewCode(basePath string, yaml *model.Yaml) (*Code, error) {
 	}
 
 	boilBase := base.NewBoilBase(basePath)
+	copyBase := base.NewCopyBase(basePath + "/query")
 
 	code.BoilerBase = boilBase
+	code.CopyerBase = copyBase
 	code.Code = codeContainer
 
 	return code, nil
@@ -82,18 +85,35 @@ func NewCode(basePath string, yaml *model.Yaml) (*Code, error) {
 
 // BoilCode コードの生成
 func (c *Code) BoilCode() error {
-	err := c.MakeBaseDir()
+	err := c.BoilerBase.MakeBaseDir()
 	if err != nil {
-		return fmt.Errorf("Make Base Directory Error: %w", err)
+		return fmt.Errorf("Make Base Directory Error(Boiler): %w", err)
+	}
+
+	err = c.CopyerBase.MakeBaseDir()
+	if err != nil {
+		return fmt.Errorf("Make Base Directory Error(Copy): %w", err)
 	}
 
 	fileNames := []string{"tables.go", "types.go", "db.go", "migrate.go"}
 	for _, fileName := range fileNames {
-		fw, err := c.MakeFileWriter(fileName)
+		fw, err := c.BoilerBase.MakeFileWriter(fileName)
 		if err != nil {
 			return fmt.Errorf("Make File Writer Error(%s): %w", fileName, err)
 		}
-		err = c.MakeFile(fw, fileName, c.Code)
+		err = c.BoilerBase.MakeFile(fw, fileName, c.Code)
+		if err != nil {
+			return fmt.Errorf("Make File Error(%s): %w", fileName, err)
+		}
+	}
+
+	fileNames = []string{"migrate", "where"}
+	for _, fileName := range fileNames {
+		fw, err := c.CopyerBase.MakeFileWriter(fileName)
+		if err != nil {
+			return fmt.Errorf("Make File Writer Error(%s): %w", fileName, err)
+		}
+		err = c.CopyerBase.MakeFile(fw, fileName)
 		if err != nil {
 			return fmt.Errorf("Make File Error(%s): %w", fileName, err)
 		}
@@ -101,12 +121,12 @@ func (c *Code) BoilCode() error {
 
 	for _, table := range c.Tables {
 		fileName := fmt.Sprintf("%s_query.go", table.Name.Snake)
-		fw, err := c.MakeFileWriter(fileName)
+		fw, err := c.BoilerBase.MakeFileWriter(fileName)
 		if err != nil {
 			return fmt.Errorf("Make File Writer Error(%s): %w", fileName, err)
 		}
 		fileName = "queries.go"
-		err = c.MakeFile(fw, fileName, table)
+		err = c.BoilerBase.MakeFile(fw, fileName, table)
 		if err != nil {
 			return fmt.Errorf("Make File Error(%s): %w", fileName, err)
 		}

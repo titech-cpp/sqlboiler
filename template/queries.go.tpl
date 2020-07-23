@@ -4,7 +4,7 @@ import (
     "fmt"
     "database/sql"
 
-    "github.com/titech-cpp/sqlboiler/queries"
+    "sample/models/query"
 )
 
 type {{.Name.LowerCamel}} int

@@ -14,7 +14,7 @@ type Table []*Column
 type Column struct {
 	Field   string
 	Type    string
-	Null    string
+	Null    bool
 	Key     []string
 	Default string
 	Extra   []string
@@ -23,12 +23,12 @@ type Column struct {
 // Key キーの構造体
 type Key struct {
 	Name   string
-	Column string
-	Type   string
+	Column *Column
 }
 
 // ShowDatabaseInfo データベースの情報の取得
 func ShowDatabaseInfo(ctx context.Context, tx *sql.Tx) (tableMap map[string]Table, err error) {
+	tableMap = map[string]Table{}
 	tableNames := []string{}
 	rows, err := tx.QueryContext(ctx, "SHOW TABLES")
 	if err != nil {
@@ -44,7 +44,7 @@ func ShowDatabaseInfo(ctx context.Context, tx *sql.Tx) (tableMap map[string]Tabl
 	}
 
 	for _, tableName := range tableNames {
-		rows, err := tx.QueryContext(ctx, "SHOW COLUMNS FROM " + tableName)
+		rows, err := tx.QueryContext(ctx, "SHOW COLUMNS FROM "+tableName)
 		if err != nil {
 			return nil, fmt.Errorf("Get Columns Error: %w", err)
 		}
@@ -52,14 +52,25 @@ func ShowDatabaseInfo(ctx context.Context, tx *sql.Tx) (tableMap map[string]Tabl
 		rep := regexp.MustCompile("%s*,%s*")
 		for rows.Next() {
 			var column Column
-			var key string
-			var extra string
-			err := rows.Scan(&column.Field, &column.Type, &column.Null, &key, &column.Default, &extra)
+			var null string
+			var key sql.NullString
+			var defaultVal sql.NullString
+			var extra sql.NullString
+			err := rows.Scan(&column.Field, &column.Type, &null, &key, &defaultVal, &extra)
 			if err != nil {
 				return nil, fmt.Errorf("Scan Columns Error: %w", err)
 			}
 
-			keys := rep.Split(key, -1)
+			if null == "YES" {
+				column.Null = true
+			} else {
+				column.Null = false
+			}
+
+			var keys []string
+			if key.Valid {
+				keys = rep.Split(key.String, -1)
+			}
 			column.Key = []string{}
 			for _, v := range keys {
 				if v != "MUL" {
@@ -67,7 +78,14 @@ func ShowDatabaseInfo(ctx context.Context, tx *sql.Tx) (tableMap map[string]Tabl
 				}
 			}
 
-			column.Extra = rep.Split(extra, -1)
+			if defaultVal.Valid {
+				column.Default = defaultVal.String
+			}
+
+			column.Extra = []string{}
+			if extra.Valid {
+				column.Extra = rep.Split(extra.String, -1)
+			}
 
 			columns = append(columns, &column)
 		}
@@ -83,9 +101,11 @@ func (nowTable Table) GetDiff(newTable Table) (addColumns []*Column, alterColumn
 		for i, v := range newTable {
 			if column.Field == v.Field {
 				if column.Type != v.Type {
+					fmt.Println("type", *v)
 					alterColumns = append(alterColumns, v)
 				}
 				if column.Null != v.Null {
+					fmt.Println("null", column, *v)
 					changeNullColumns = append(changeNullColumns, v)
 				}
 				for _, key := range column.Key {
@@ -94,9 +114,10 @@ func (nowTable Table) GetDiff(newTable Table) (addColumns []*Column, alterColumn
 							break
 						}
 						if i == len(v.Key)-1 {
+							fmt.Println("add_key", *v)
 							addKeys = append(addKeys, &Key{
 								Name:   key,
-								Column: column.Field,
+								Column: v,
 							})
 						}
 					}
@@ -107,9 +128,10 @@ func (nowTable Table) GetDiff(newTable Table) (addColumns []*Column, alterColumn
 							break
 						}
 						if i == len(v.Key)-1 {
+							fmt.Println("del_key", *v)
 							delKeys = append(delKeys, &Key{
 								Name:   key,
-								Column: column.Field,
+								Column: v,
 							})
 						}
 					}
@@ -117,6 +139,7 @@ func (nowTable Table) GetDiff(newTable Table) (addColumns []*Column, alterColumn
 				break
 			}
 			if i == len(newTable)-1 {
+				fmt.Println("del_column", *v)
 				delColumns = append(delColumns, column)
 			}
 		}
@@ -127,6 +150,7 @@ func (nowTable Table) GetDiff(newTable Table) (addColumns []*Column, alterColumn
 				break
 			}
 			if i == len(nowTable)-1 {
+				fmt.Println("add_column", *v)
 				addColumns = append(addColumns, column)
 			}
 		}
