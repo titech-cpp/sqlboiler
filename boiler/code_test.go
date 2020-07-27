@@ -29,8 +29,8 @@ func TestCode(t *testing.T) {
 						},
 						Type: &model.CodeType{
 							Code: &model.CodeSQLTypes{
-								NotNull: "nullInt32",
-								Null: "int32",
+								NotNull: "int32",
+								Null: "nullInt32",
 								Upper: "Int32",
 							},
 							SQL:  "int(1)",
