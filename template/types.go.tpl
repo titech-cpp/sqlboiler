@@ -2,6 +2,7 @@ package models
 
 import (
     "time"
+    "errors"
     "database/sql"
 )
 
@@ -11,3 +12,4 @@ type nullString = sql.NullString
 type nullInt32 = sql.NullInt32
 type nullInt64 = sql.NullInt64
 type nullTime = sql.NullTime
+var newError = errors.New

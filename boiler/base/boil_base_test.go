@@ -26,7 +26,11 @@ func TestBoilBase(t *testing.T) {
 					{
 						Name: nameDetail,
 						Type: &model.CodeType{
-							Code: "test",
+							Code: &model.CodeSQLTypes{
+								NotNull: "test",
+								Null: "test",
+								Upper: "Test",
+							},
 							SQL:  "test",
 						},
 						Null:     true,

@@ -67,7 +67,7 @@ func (d *DB) Migrate() error {
                 for _, value := range val.Extra {
                     switch value {
                     case "auto_increment":
-                        autoIncrement = "AUTO_INCREMENT"
+                        autoIncrement = " AUTO_INCREMENT"
                     }
                 }
                 defaultVal := ""
