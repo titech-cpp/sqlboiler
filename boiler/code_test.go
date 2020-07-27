@@ -28,7 +28,11 @@ func TestCode(t *testing.T) {
 							Snake:      "testa",
 						},
 						Type: &model.CodeType{
-							Code: "nullInt32",
+							Code: &model.CodeSQLTypes{
+								NotNull: "nullInt32",
+								Null: "int32",
+								Upper: "Int32",
+							},
 							SQL:  "int(1)",
 						},
 						Null:     true,
@@ -48,7 +52,11 @@ func TestCode(t *testing.T) {
 							Snake:      "testb",
 						},
 						Type: &model.CodeType{
-							Code: "int32",
+							Code: &model.CodeSQLTypes{
+								NotNull: "int32",
+								Null: "int32",
+								Upper: "Int32",
+							},
 							SQL:  "int",
 						},
 						Null:     false,
@@ -77,15 +85,15 @@ func TestCode(t *testing.T) {
 	}
 
 	expectedType := "bool"
-	goType, err := typeParser("boolean", false)
+	goType, err := typeParser("boolean")
 	if err != nil {
 		t.Fatalf("Unexpected TypeParser Error: %#v", err)
 	}
-	if goType != expectedType {
+	if goType.NotNull != expectedType {
 		t.Fatalf("Invalid Parsed Type %s, Expected %s", goType, expectedType)
 	}
 
-	_, err = typeParser("test", false)
+	_, err = typeParser("test")
 	if err == nil {
 		t.Fatalf("Unexpected No Error: %s", goType)
 	}

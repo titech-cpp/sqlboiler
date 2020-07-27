@@ -136,6 +136,28 @@ func (nowTable Table) GetDiff(newTable Table) (addColumns []*Column, alterColumn
 						}
 					}
 				}
+				for _, extra := range column.Extra {
+					for i, val := range v.Extra {
+						if extra == val {
+							break
+						}
+						if i == len(v.Extra) - 1 {
+							fmt.Println("del_extra", *v)
+							alterColumns = append(alterColumns, v)
+						}
+					}
+				}
+				for _, extra := range v.Extra {
+					for i, val := range column.Extra {
+						if extra == val {
+							break
+						}
+						if i == len(v.Extra) - 1 {
+							fmt.Println("add_extra", *v)
+							alterColumns = append(alterColumns, v)
+						}
+					}
+				}
 				break
 			}
 			if i == len(newTable)-1 {

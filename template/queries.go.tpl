@@ -2,6 +2,7 @@ package models
 
 import (
     "fmt"
+    "strings"
     "database/sql"
 
     "sample/models/query"
@@ -37,3 +38,5 @@ func (q *{{.Name.UpperCamel}}Query) Where(columnType {{printf $lowerTable}}, val
 }
 
 {{template "select" .}}
+
+{{template "insert" .}}

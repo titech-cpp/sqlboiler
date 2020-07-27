@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"reflect"
 )
 
 // Code コード生成用の構造体
@@ -65,13 +66,20 @@ func (c *CodeColumn) Check(cc *CodeColumn) bool {
 
 // CodeType 型の構造体
 type CodeType struct {
-	Code string
+	Code *CodeSQLTypes
 	SQL  string
 }
 
 // Check 同一か確認
 func (c *CodeType) Check(ct *CodeType) bool {
-	return c.Code == ct.Code && c.SQL == ct.SQL
+	return reflect.DeepEqual(c.Code, ct.Code) && c.SQL == ct.SQL
+}
+
+// CodeSQLTypes コード生成用の型の一覧
+type CodeSQLTypes struct {
+	NotNull string
+	Null    string
+	Upper   string
 }
 
 // CodeKey キーの構造体

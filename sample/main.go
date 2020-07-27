@@ -40,4 +40,23 @@ func main() {
 	}
 
 	fmt.Printf("%+v\n", users)
+
+	name := "mazrean"
+	password := "testtest"
+	err = db.Users().Insert(&models.Users{
+		Name: &name,
+		Password: &password,
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	user, err = db.Users().Find()
+	if err == models.RECORD_NOT_FOUND {
+		log.Println("Record Not Found")
+	} else if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("%+v\n", user)
 }

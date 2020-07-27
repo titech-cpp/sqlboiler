@@ -15,9 +15,9 @@ func (q *{{.Name.UpperCamel}}Query) Find() (*{{.Name.UpperCamel}}Table,error) {
     }
     defer rows.Close()
 
-    table := new({{.Name.UpperCamel}}Table)
+    nullableTable := new(nullable{{.Name.UpperCamel}}Table)
     dests := []interface{}{}{{range .Columns}}
-    dests = append(dests, &(table.{{.Name.UpperCamel}})){{end}}
+    dests = append(dests, &(nullableTable.{{.Name.UpperCamel}})){{end}}
     if rows.Next() {
         err = rows.Scan(dests...)
         if err != nil {
@@ -26,6 +26,12 @@ func (q *{{.Name.UpperCamel}}Query) Find() (*{{.Name.UpperCamel}}Table,error) {
     } else {
         return nil, RECORD_NOT_FOUND
     }
+
+    table := new({{.Name.UpperCamel}}Table){{range .Columns}}{{if .Null}}
+    if nullableTable.{{.Name.UpperCamel}}.Valid {
+        table.{{.Name.UpperCamel}} = nullableTable.{{.Name.UpperCamel}}.{{.Type.Code.Upper}}
+    }{{else}}
+    table.{{.Name.UpperCamel}} = nullableTable.{{.Name.UpperCamel}}{{end}}{{end}}
 
     return table, nil
 }
@@ -48,13 +54,19 @@ func (q *{{.Name.UpperCamel}}Query) Select() ([]*{{.Name.UpperCamel}}Table,error
 
     tables := []*{{.Name.UpperCamel}}Table{}
     for rows.Next() {
-        table := new({{.Name.UpperCamel}}Table)
+        nullableTable := new(nullable{{.Name.UpperCamel}}Table)
         dests := []interface{}{}{{range .Columns}}
-        dests = append(dests, &(table.{{.Name.UpperCamel}})){{end}}
+        dests = append(dests, &(nullableTable.{{.Name.UpperCamel}})){{end}}
         err = rows.Scan(dests...)
         if err != nil {
             return nil, fmt.Errorf("Scaning Rows Error: %w", err)
         }
+
+        table := new({{.Name.UpperCamel}}Table){{range .Columns}}{{if .Null}}
+        if nullableTable.{{.Name.UpperCamel}}.Valid {
+            table.{{.Name.UpperCamel}} = nullableTable.{{.Name.UpperCamel}}.{{.Type.Code.Upper}}
+        }{{else}}
+        table.{{.Name.UpperCamel}} = nullableTable.{{.Name.UpperCamel}}{{end}}{{end}}
 
         tables = append(tables, table)
     }

@@ -27,10 +27,16 @@ func NewCode(basePath string, yaml *model.Yaml) (*Code, error) {
 			if err != nil {
 				return nil, fmt.Errorf("Name Detail Constructor(%s.%s) Error: %w", key, v.Name, err)
 			}
-			codeType, err := typeParser(v.Type, !v.NoNull)
+			codeType, err := typeParser(v.Type)
 			if err != nil {
 				return nil, fmt.Errorf("Type Parse Error(%s.%s): %w", key, v.Name, err)
 			}
+
+			nullCodeType := codeType.Null
+			if v.NoNull {
+				nullCodeType = codeType.NotNull
+			}
+
 			var foreigns []*model.CodeForeign
 			for k, yamlForeign := range v.ForeignKey {
 				foreign := new(model.CodeForeign)
@@ -43,7 +49,11 @@ func NewCode(basePath string, yaml *model.Yaml) (*Code, error) {
 			column := &model.CodeColumn{
 				Name: name,
 				Type: &model.CodeType{
-					Code: codeType,
+					Code: &model.CodeSQLTypes{
+						NotNull: codeType.NotNull,
+						Null: nullCodeType,
+						Upper: codeType.Upper,
+					},
 					SQL:  v.Type,
 				},
 				Null:     !v.NoNull,
@@ -95,7 +105,7 @@ func (c *Code) BoilCode() error {
 		return fmt.Errorf("Make Base Directory Error(Copy): %w", err)
 	}
 
-	fileNames := []string{"tables.go", "types.go", "db.go", "migrate.go"}
+	fileNames := []string{"tables.go", "nullable_tables.go", "pointer_tables.go", "types.go", "db.go", "migrate.go"}
 	for _, fileName := range fileNames {
 		fw, err := c.BoilerBase.MakeFileWriter(fileName)
 		if err != nil {
@@ -135,40 +145,43 @@ func (c *Code) BoilCode() error {
 	return nil
 }
 
-func typeParser(sqlType string, isNullable bool) (string, error) {
-	type sqlTypes struct {
-		nonNull string
-		null    string
+func typeParser(sqlType string) (*model.CodeSQLTypes, error) {
+	sqlBool := &model.CodeSQLTypes{
+		NotNull: "bool",
+		Null:    "nullBool",
+		Upper:   "Bool",
 	}
-	sqlBool := &sqlTypes{
-		nonNull: "bool",
-		null:    "nullBool",
+	sqlString := &model.CodeSQLTypes{
+		NotNull: "string",
+		Null:    "nullString",
+		Upper:   "String",
 	}
-	sqlString := &sqlTypes{
-		nonNull: "string",
-		null:    "nullString",
+	sqlInt8 := &model.CodeSQLTypes{
+		NotNull: "int8",
+		Null:    "nullInt32",
+		Upper:   "Int32",
 	}
-	sqlInt8 := &sqlTypes{
-		nonNull: "int8",
-		null:    "nullInt32",
+	sqlInt16 := &model.CodeSQLTypes{
+		NotNull: "int16",
+		Null:    "nullInt32",
+		Upper:   "Int32",
 	}
-	sqlInt16 := &sqlTypes{
-		nonNull: "int16",
-		null:    "nullInt32",
+	sqlInt32 := &model.CodeSQLTypes{
+		NotNull: "int32",
+		Null:    "nullInt32",
+		Upper:   "Int32",
 	}
-	sqlInt32 := &sqlTypes{
-		nonNull: "int32",
-		null:    "nullInt32",
+	sqlInt64 := &model.CodeSQLTypes{
+		NotNull: "int64",
+		Null:    "nullInt64",
+		Upper:   "Int64",
 	}
-	sqlInt64 := &sqlTypes{
-		nonNull: "int64",
-		null:    "nullInt64",
+	sqlTime := &model.CodeSQLTypes{
+		NotNull: "timeTime",
+		Null:    "nullTime",
+		Upper:   "Time",
 	}
-	sqlTime := &sqlTypes{
-		nonNull: "timeTime",
-		null:    "nullTime",
-	}
-	typeMap := map[string]*sqlTypes{
+	typeMap := map[string]*model.CodeSQLTypes{
 		"boolean":   sqlBool,
 		"char":      sqlString,
 		"varchar":   sqlString,
@@ -193,7 +206,7 @@ func typeParser(sqlType string, isNullable bool) (string, error) {
 	isStringfied := false
 	for _, c := range sqlType {
 		if (c < 'a' || 'z' < c) && (c < '0' || '9' < c) && c != '(' && c != ')' {
-			return "", fmt.Errorf("%s In Type %s Should Be Lower Case", string(c), sqlType)
+			return nil, fmt.Errorf("%s In Type %s Should Be Lower Case", string(c), sqlType)
 		}
 		if c == '(' && !isStringfied {
 			sqlType = buf.String()
@@ -208,11 +221,8 @@ func typeParser(sqlType string, isNullable bool) (string, error) {
 
 	goType, ok := typeMap[sqlType]
 	if !ok {
-		return "", fmt.Errorf("Invalid Type %s", sqlType)
+		return nil, fmt.Errorf("Invalid Type %s", sqlType)
 	}
 
-	if isNullable {
-		return goType.null, nil
-	}
-	return goType.nonNull, nil
+	return goType, nil
 }
