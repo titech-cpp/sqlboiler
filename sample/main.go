@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"os"
 
 	"sample/models"
@@ -15,6 +16,7 @@ func main() {
 	if err != nil {
 		panic(fmt.Errorf("Connecting DB Error: %w", err))
 	}
+	defer _db.Close()
 
 	db := models.NewDB(_db)
 
@@ -22,4 +24,20 @@ func main() {
 	if err != nil {
 		panic(fmt.Errorf("Migrate Error: %w", err))
 	}
+
+	user, err := db.Users().Find()
+	if err == models.RECORD_NOT_FOUND {
+		log.Println("Record Not Found")
+	} else if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("%+v\n", user)
+
+	users, err := db.Users().Select()
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("%+v\n", users)
 }
