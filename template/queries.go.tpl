@@ -21,17 +21,18 @@ type {{.Name.UpperCamel}}Query struct {
     {{.Name.UpperCamel}} interface{}{{end}}
 }
 
-func (q *{{.Name.UpperCamel}}Query) createWhereMap() (whereMap map[string]interface{}) { {{range .Columns}}
+func (q *{{.Name.UpperCamel}}Query) createWhereMap() map[string]interface{} {
+    whereMap := map[string]interface{}{}{{range .Columns}}
     if q.{{.Name.UpperCamel}} != nil {
         whereMap["{{.Name.Snake}}"] = q.{{.Name.UpperCamel}}
     }{{end}}
-    return
+    return whereMap
 }
 
 func (q *{{.Name.UpperCamel}}Query) Where(columnType {{printf $lowerTable}}, value interface{}) *{{.Name.UpperCamel}}Query {
     switch columnType { {{range .Columns}}
-        case {{printf $upperTable}}{{.Name.UpperCamel}}:
-            q.{{.Name.UpperCamel}} = value{{end}}
+    case {{printf $upperTable}}{{.Name.UpperCamel}}:
+        q.{{.Name.UpperCamel}} = value{{end}}
     }
 
     return q
@@ -40,3 +41,5 @@ func (q *{{.Name.UpperCamel}}Query) Where(columnType {{printf $lowerTable}}, val
 {{template "select" .}}
 
 {{template "insert" .}}
+
+{{template "update" .}}
