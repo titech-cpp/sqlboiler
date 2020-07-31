@@ -44,7 +44,7 @@ func main() {
 	name := "mazrean"
 	password := "testtest"
 	err = db.Users().Insert(&models.Users{
-		Name: &name,
+		Name:     &name,
 		Password: &password,
 	})
 	if err != nil {
@@ -52,6 +52,20 @@ func main() {
 	}
 
 	user, err = db.Users().Find()
+	if err == models.RECORD_NOT_FOUND {
+		log.Println("Record Not Found")
+	} else if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("%+v\n", user)
+
+	password = "nyannyan"
+	err = db.Users().Where(models.UsersId, user.Id).Update(&models.Users{
+		Password: &password,
+	})
+
+	user, err = db.Users().Where(models.UsersId, user.Id).Find()
 	if err == models.RECORD_NOT_FOUND {
 		log.Println("Record Not Found")
 	} else if err != nil {
