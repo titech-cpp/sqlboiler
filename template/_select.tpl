@@ -5,9 +5,9 @@ func (q *{{.Name.UpperCamel}}Query) Find() (*{{.Name.UpperCamel}}Table,error) {
 
     args := []interface{}{}
     if len(whereArgs) != 0 {
-        args = append(args, whereArgs)
+        args = append(args, whereArgs...)
     }
-    query := fmt.Sprintf("SELECT * FROM {{.Name.Snake}} LIMIT 1 %s", whereQuery)
+    query := fmt.Sprintf("SELECT * FROM {{.Name.Snake}} %s LIMIT 1", whereQuery)
 
     rows, err := q.db.Query(query, args...)
     if err != nil {
@@ -42,7 +42,7 @@ func (q *{{.Name.UpperCamel}}Query) Select() ([]*{{.Name.UpperCamel}}Table,error
 
     args := []interface{}{}
     if len(whereArgs) != 0 {
-        args = append(args, whereArgs)
+        args = append(args, whereArgs...)
     }
     query := fmt.Sprintf("SELECT * FROM {{.Name.Snake}} %s", whereQuery)
 
