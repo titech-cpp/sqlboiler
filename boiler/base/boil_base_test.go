@@ -28,10 +28,10 @@ func TestBoilBase(t *testing.T) {
 						Type: &model.CodeType{
 							Code: &model.CodeSQLTypes{
 								NotNull: "test",
-								Null: "test",
-								Upper: "Test",
+								Null:    "test",
+								Upper:   "Test",
 							},
-							SQL:  "test",
+							SQL: "test",
 						},
 						Null:     true,
 						ReadOnly: true,

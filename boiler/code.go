@@ -51,10 +51,10 @@ func NewCode(basePath string, yaml *model.Yaml) (*Code, error) {
 				Type: &model.CodeType{
 					Code: &model.CodeSQLTypes{
 						NotNull: codeType.NotNull,
-						Null: nullCodeType,
-						Upper: codeType.Upper,
+						Null:    nullCodeType,
+						Upper:   codeType.Upper,
 					},
-					SQL:  v.Type,
+					SQL: v.Type,
 				},
 				Null:     !v.NoNull,
 				ReadOnly: v.AutoIncrement,

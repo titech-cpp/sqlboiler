@@ -64,6 +64,9 @@ func main() {
 	err = db.Users().Where(models.UsersId, user.Id).Update(&models.Users{
 		Password: &password,
 	})
+	if err != nil {
+		panic(err)
+	}
 
 	user, err = db.Users().Where(models.UsersId, user.Id).Find()
 	if err == models.RECORD_NOT_FOUND {
@@ -73,4 +76,16 @@ func main() {
 	}
 
 	fmt.Printf("%+v\n", user)
+
+	err = db.Users().Where(models.UsersId, user.Id).Delete()
+	if err != nil {
+		panic(err)
+	}
+
+	user, err = db.Users().Where(models.UsersId, user.Id).Find()
+	if err == models.RECORD_NOT_FOUND {
+		log.Println("Record Not Found")
+	} else if err != nil {
+		panic(err)
+	}
 }

@@ -141,7 +141,7 @@ func (nowTable Table) GetDiff(newTable Table) (addColumns []*Column, alterColumn
 						if extra == val {
 							break
 						}
-						if i == len(v.Extra) - 1 {
+						if i == len(v.Extra)-1 {
 							fmt.Println("del_extra", *v)
 							alterColumns = append(alterColumns, v)
 						}
@@ -152,7 +152,7 @@ func (nowTable Table) GetDiff(newTable Table) (addColumns []*Column, alterColumn
 						if extra == val {
 							break
 						}
-						if i == len(v.Extra) - 1 {
+						if i == len(v.Extra)-1 {
 							fmt.Println("add_extra", *v)
 							alterColumns = append(alterColumns, v)
 						}

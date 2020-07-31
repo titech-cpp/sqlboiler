@@ -43,3 +43,5 @@ func (q *{{.Name.UpperCamel}}Query) Where(columnType {{printf $lowerTable}}, val
 {{template "insert" .}}
 
 {{template "update" .}}
+
+{{template "delete" .}}
