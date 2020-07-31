@@ -66,7 +66,7 @@ func (b *BoilBase) MakeFile(file io.WriteCloser, tmpNameBase string, vars interf
 	}
 	tmpFile := builder.String()
 
-	defines := []string{"select", "insert", "update"}
+	defines := []string{"select", "insert", "update", "delete"}
 	defineFiles := make([]string, 0, len(defines))
 	for _, v := range defines {
 		fp, err = FS.Open("/_" + v + ".tpl")

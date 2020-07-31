@@ -30,10 +30,10 @@ func TestCode(t *testing.T) {
 						Type: &model.CodeType{
 							Code: &model.CodeSQLTypes{
 								NotNull: "int32",
-								Null: "nullInt32",
-								Upper: "Int32",
+								Null:    "nullInt32",
+								Upper:   "Int32",
 							},
-							SQL:  "int(1)",
+							SQL: "int(1)",
 						},
 						Null:     true,
 						ReadOnly: true,
@@ -54,10 +54,10 @@ func TestCode(t *testing.T) {
 						Type: &model.CodeType{
 							Code: &model.CodeSQLTypes{
 								NotNull: "int32",
-								Null: "int32",
-								Upper: "Int32",
+								Null:    "int32",
+								Upper:   "Int32",
 							},
-							SQL:  "int",
+							SQL: "int",
 						},
 						Null:     false,
 						ReadOnly: false,
