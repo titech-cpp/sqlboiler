@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"sample/models"
+	"sample/models/query"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -61,14 +62,18 @@ func main() {
 	fmt.Printf("%+v\n", user)
 
 	password = "nyannyan"
-	err = db.Users().Where(models.UsersId, user.Id).Update(&models.Users{
+	err = db.Users().Where(&models.Users{
+		Id: &user.Id,
+	}).Update(&models.Users{
 		Password: &password,
 	})
 	if err != nil {
 		panic(err)
 	}
 
-	user, err = db.Users().Where(models.UsersId, user.Id).Find()
+	user, err = db.Users().Where(&models.Users{
+		Id: &user.Id,
+	}).Find()
 	if err == models.RECORD_NOT_FOUND {
 		log.Println("Record Not Found")
 	} else if err != nil {
@@ -77,15 +82,28 @@ func main() {
 
 	fmt.Printf("%+v\n", user)
 
-	err = db.Users().Where(models.UsersId, user.Id).Delete()
+	err = db.Users().Where(&models.Users{
+		Id: &user.Id,
+	}).Delete()
 	if err != nil {
 		panic(err)
 	}
 
-	user, err = db.Users().Where(models.UsersId, user.Id).Find()
+	user, err = db.Users().Where(&models.Users{
+		Id: &user.Id,
+	}).Find()
 	if err == models.RECORD_NOT_FOUND {
 		log.Println("Record Not Found")
 	} else if err != nil {
 		panic(err)
 	}
+
+	res, err := db.Favorites().JoinUsers(models.FavoritesUserId, models.UsersId, query.INNER).Select()
+	if err == models.RECORD_NOT_FOUND {
+		log.Println("Record Not Found")
+	} else if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(res)
 }

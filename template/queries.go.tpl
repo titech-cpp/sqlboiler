@@ -17,26 +17,11 @@ const ({{range $i, $v := .Columns}}
 // {{.Name.UpperCamel}}Query {{.Name.UpperCamel}}のクエリの構造体
 type {{.Name.UpperCamel}}Query struct {
     db *sql.DB
-    whereStruct *query.Where{{range .Columns}}
-    {{.Name.UpperCamel}} interface{}{{end}}
+    whereStruct *query.Where
+    table {{.Name.UpperCamel}}
 }
 
-func (q *{{.Name.UpperCamel}}Query) createWhereMap() map[string]interface{} {
-    whereMap := map[string]interface{}{}{{range .Columns}}
-    if q.{{.Name.UpperCamel}} != nil {
-        whereMap["{{.Name.Snake}}"] = q.{{.Name.UpperCamel}}
-    }{{end}}
-    return whereMap
-}
-
-func (q *{{.Name.UpperCamel}}Query) Where(columnType {{printf $lowerTable}}, value interface{}) *{{.Name.UpperCamel}}Query {
-    switch columnType { {{range .Columns}}
-    case {{printf $upperTable}}{{.Name.UpperCamel}}:
-        q.{{.Name.UpperCamel}} = value{{end}}
-    }
-
-    return q
-}
+{{template "where" .}}
 
 {{template "select" .}}
 
