@@ -35,7 +35,7 @@ func main() {
 
 	fmt.Printf("%+v\n", user)
 
-	users, err := db.Users().Select()
+	users, err := db.Users().Limit(2).Offset(1).Select()
 	if err != nil {
 		panic(err)
 	}
