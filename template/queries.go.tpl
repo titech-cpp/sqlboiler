@@ -14,6 +14,20 @@ const ({{range $i, $v := .Columns}}
     {{printf $upperTable}}{{.Name.UpperCamel}}{{if eq $i 0}} {{printf $lowerTable}} = iota{{end}}{{end}}
 )
 
+// {{.Name.UpperCamel}} {{.Name.UpperCamel}}のテーブルの構造体（全ての要素がポインタ）
+type {{.Name.UpperCamel}} struct {
+{{range .Columns}}    {{.Name.UpperCamel}} *{{.Type.Code.NotNull}}
+{{end}}}
+
+type nullable{{.Name.UpperCamel}}Table struct {
+{{range .Columns}}    {{.Name.UpperCamel}} {{.Type.Code.Null}}
+{{end}}}
+
+// {{.Name.UpperCamel}}Table {{.Name.UpperCamel}}のテーブルの構造体
+type {{.Name.UpperCamel}}Table struct {
+{{range .Columns}}    {{.Name.UpperCamel}} {{.Type.Code.NotNull}}
+{{end}}}
+
 // {{.Name.UpperCamel}}Query {{.Name.UpperCamel}}のクエリの構造体
 type {{.Name.UpperCamel}}Query struct {
     db *sql.DB
@@ -30,3 +44,5 @@ type {{.Name.UpperCamel}}Query struct {
 {{template "update" .}}
 
 {{template "delete" .}}
+
+{{template "join" .}}

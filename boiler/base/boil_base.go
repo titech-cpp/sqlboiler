@@ -66,7 +66,7 @@ func (b *BoilBase) MakeFile(file io.WriteCloser, tmpNameBase string, vars interf
 	}
 	tmpFile := builder.String()
 
-	defines := []string{"where", "select", "insert", "update", "delete"}
+	defines := []string{"where", "select", "insert", "update", "delete", "join", "joined_where", "joined_select"}
 	defineFiles := make([]string, 0, len(defines))
 	for _, v := range defines {
 		fp, err = FS.Open("/_" + v + ".tpl")
@@ -88,6 +88,7 @@ func (b *BoilBase) MakeFile(file io.WriteCloser, tmpNameBase string, vars interf
 		"isLast": func(i int, l int) bool {
 			return i == l-1
 		},
+		"toUpper": strings.ToUpper,
 	}
 
 	tmp, err := template.New(tmpNameBase).Funcs(funcMap).Parse(tmpFile)
