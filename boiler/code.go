@@ -3,6 +3,7 @@ package boiler
 import (
 	"bytes"
 	"fmt"
+	"strings"
 
 	"github.com/titech-cpp/sqlboiler/boiler/base"
 	"github.com/titech-cpp/sqlboiler/model"
@@ -22,6 +23,7 @@ func NewCode(basePath string, yaml *model.Yaml) (*Code, error) {
 	tables := make([]*model.CodeTable, 0, len(yaml.Tables))
 	for key, val := range yaml.Tables {
 		columns := make([]*model.CodeColumn, 0, len(val))
+		joinMap := map[string][]*model.CodeJoinColumn{}
 		for _, v := range val {
 			name, err := model.NewNameDetail(v.Name)
 			if err != nil {
@@ -44,6 +46,21 @@ func NewCode(basePath string, yaml *model.Yaml) (*Code, error) {
 				foreign.Column = yamlForeign
 
 				foreigns = append(foreigns, foreign)
+
+				joinTable, err := model.NewNameDetail(k)
+				if err != nil {
+					return nil, fmt.Errorf("Name Detail Constructor(%s) Error: %w", k, err)
+				}
+
+				joinColumn, err := model.NewNameDetail(yamlForeign)
+				if err != nil {
+					return nil, fmt.Errorf("Name Detail Constructor(%s) Error: %w", k, err)
+				}
+
+				joinMap[joinTable.Snake] = append(joinMap[joinTable.Snake], &model.CodeJoinColumn{
+					This:   name,
+					Target: joinColumn,
+				})
 			}
 
 			column := &model.CodeColumn{
@@ -72,9 +89,22 @@ func NewCode(basePath string, yaml *model.Yaml) (*Code, error) {
 		if err != nil {
 			return nil, fmt.Errorf("Name Detail Constructor(%s) Error: %w", key, err)
 		}
+
+		joins := []*model.CodeJoin{}
+		for table, column := range joinMap {
+			tableName, err := model.NewNameDetail(table)
+			if err != nil {
+				return nil, fmt.Errorf("Name Detail Constructor(%s) Error: %w", table, err)
+			}
+			joins = append(joins, &model.CodeJoin{
+				Table:  tableName,
+				Column: column,
+			})
+		}
 		table := &model.CodeTable{
 			Name:    name,
 			Columns: columns,
+			Joins:   joins,
 		}
 		tables = append(tables, table)
 	}
@@ -89,6 +119,7 @@ func NewCode(basePath string, yaml *model.Yaml) (*Code, error) {
 	code.BoilerBase = boilBase
 	code.CopyerBase = copyBase
 	code.Code = codeContainer
+	code.makeJoinedTables()
 
 	return code, nil
 }
@@ -105,7 +136,7 @@ func (c *Code) BoilCode() error {
 		return fmt.Errorf("Make Base Directory Error(Copy): %w", err)
 	}
 
-	fileNames := []string{"tables.go", "nullable_tables.go", "pointer_tables.go", "types.go", "db.go", "migrate.go"}
+	fileNames := []string{"types.go", "db.go", "migrate.go"}
 	for _, fileName := range fileNames {
 		fw, err := c.BoilerBase.MakeFileWriter(fileName)
 		if err != nil {
@@ -117,13 +148,31 @@ func (c *Code) BoilCode() error {
 		}
 	}
 
-	fileNames = []string{"migrate", "where"}
+	fileNames = []string{"migrate", "where", "join"}
 	for _, fileName := range fileNames {
 		fw, err := c.CopyerBase.MakeFileWriter(fileName)
 		if err != nil {
 			return fmt.Errorf("Make File Writer Error(%s): %w", fileName, err)
 		}
 		err = c.CopyerBase.MakeFile(fw, fileName)
+		if err != nil {
+			return fmt.Errorf("Make File Error(%s): %w", fileName, err)
+		}
+	}
+
+	for _, table := range c.JoinedTables {
+		strTables := make([]string, 0, len(table.Tables))
+		for _, v := range table.Tables {
+			strTables = append(strTables, v.Name.Snake)
+		}
+
+		fileName := fmt.Sprintf("join_%s_query.go", strings.Join(strTables, "_"))
+		fw, err := c.BoilerBase.MakeFileWriter(fileName)
+		if err != nil {
+			return fmt.Errorf("Make File Writer Error(%s): %w", fileName, err)
+		}
+		fileName = "joined_queries.go"
+		err = c.BoilerBase.MakeFile(fw, fileName, table)
 		if err != nil {
 			return fmt.Errorf("Make File Error(%s): %w", fileName, err)
 		}
@@ -139,6 +188,79 @@ func (c *Code) BoilCode() error {
 		err = c.BoilerBase.MakeFile(fw, fileName, table)
 		if err != nil {
 			return fmt.Errorf("Make File Error(%s): %w", fileName, err)
+		}
+	}
+
+	return nil
+}
+
+func (c *Code) makeJoinedTables() error {
+	joinedTables := []*model.CodeJoinedTable{}
+
+	tableMap := map[string]*model.CodeTable{}
+	for _, table := range c.Tables {
+		tableMap[table.Name.Snake] = table
+	}
+
+	for _, table := range c.Tables {
+		for _, join := range table.Joins {
+			joinedTable, ok := tableMap[join.Table.Snake]
+			if !ok {
+				return fmt.Errorf("invalid join table: %s", join.Table)
+			}
+
+			joinedJoins := []*model.CodeJoin{}
+			for _, v := range append(table.Joins, joinedTable.Joins...) {
+				if v != join {
+					joinedJoins = append(joinedJoins, v)
+				}
+			}
+
+			joinedTables = append(joinedTables, &model.CodeJoinedTable{
+				Tables: []*model.CodeTable{
+					table,
+					joinedTable,
+				},
+				Joins: joinedJoins,
+			})
+		}
+	}
+
+	c.JoinedTables = append(c.JoinedTables, joinedTables...)
+
+	return nil
+}
+
+func (c *Code) makeDoubleJoinedTables(tables []*model.CodeJoinedTable, tableMap map[string]*model.CodeTable) error {
+	joinedTables := []*model.CodeJoinedTable{}
+
+	for _, table := range tables {
+		for _, join := range table.Joins {
+			joinedJoins := []*model.CodeJoin{}
+			for _, v := range table.Joins {
+				if v != join {
+					joinedJoins = append(joinedJoins, v)
+				}
+			}
+
+			joinedTable, ok := tableMap[join.Table.Snake]
+			if !ok {
+				return fmt.Errorf("invalid join table: %s", join.Table)
+			}
+
+			joinedTables = append(joinedTables, &model.CodeJoinedTable{
+				Tables: append(table.Tables, joinedTable),
+				Joins:  joinedJoins,
+			})
+		}
+	}
+
+	c.JoinedTables = append(c.JoinedTables, joinedTables...)
+
+	if len(joinedTables) != 0 {
+		err := c.makeDoubleJoinedTables(joinedTables, tableMap)
+		if err != nil {
+			return err
 		}
 	}
 

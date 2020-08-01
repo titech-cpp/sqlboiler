@@ -7,8 +7,9 @@ import (
 
 // Code コード生成用の構造体
 type Code struct {
-	DB     DB
-	Tables []*CodeTable
+	DB           DB
+	Tables       []*CodeTable
+	JoinedTables []*CodeJoinedTable
 }
 
 // Check 同一か確認
@@ -27,10 +28,29 @@ func (c *Code) Check(cd *Code) error {
 	return nil
 }
 
+// CodeJoin JOINの情報
+type CodeJoin struct {
+	Table  *NameDetail
+	Column []*CodeJoinColumn
+}
+
+// CodeJoinColumn JOINのカラムの情報
+type CodeJoinColumn struct {
+	This   *NameDetail
+	Target *NameDetail
+}
+
+// CodeJoinedTable JOIN後のテーブル
+type CodeJoinedTable struct {
+	Tables []*CodeTable
+	Joins  []*CodeJoin
+}
+
 // CodeTable テーブルの構造体
 type CodeTable struct {
 	Name    *NameDetail
 	Columns []*CodeColumn
+	Joins   []*CodeJoin
 }
 
 // Check 同一か確認
