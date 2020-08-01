@@ -32,6 +32,8 @@ type {{.Name.UpperCamel}}Table struct {
 type {{.Name.UpperCamel}}Query struct {
     db *sql.DB
     whereStruct *query.Where
+    limit int
+    offset int
     table {{.Name.UpperCamel}}
 }
 

@@ -1,4 +1,16 @@
 {{define "select"}}
+func (q *{{.Name.UpperCamel}}Query) Limit(limit int) *{{.Name.UpperCamel}}Query {
+    q.limit = limit
+
+    return q
+}
+
+func (q *{{.Name.UpperCamel}}Query) Offset(offset int) *{{.Name.UpperCamel}}Query {
+    q.offset = offset
+
+    return q
+}
+
 func (q *{{.Name.UpperCamel}}Query) Find() (*{{.Name.UpperCamel}}Table,error) {
     whereMap := q.createWhereMap()
     whereQuery, whereArgs := q.whereStruct.Where(whereMap)
@@ -44,7 +56,18 @@ func (q *{{.Name.UpperCamel}}Query) Select() ([]*{{.Name.UpperCamel}}Table,error
     if len(whereArgs) != 0 {
         args = append(args, whereArgs...)
     }
+
     query := fmt.Sprintf("SELECT * FROM {{.Name.Snake}} %s", whereQuery)
+
+    if q.limit != 0 {
+        query += " LIMIT ?"
+        args = append(args, q.limit)
+    }
+
+    if q.offset != 0 {
+        query += " OFFSET ?"
+        args = append(args, q.offset)
+    }
 
     rows, err := q.db.Query(query, args...)
     if err != nil {
