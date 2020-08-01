@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"sample/models"
+	"sample/models/query"
 
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -96,4 +97,13 @@ func main() {
 	} else if err != nil {
 		panic(err)
 	}
+
+	res, err := db.Favorites().JoinUsers(models.FavoritesUserId, models.UsersId, query.INNER).Select()
+	if err == models.RECORD_NOT_FOUND {
+		log.Println("Record Not Found")
+	} else if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(res)
 }
