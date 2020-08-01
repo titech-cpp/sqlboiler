@@ -137,7 +137,7 @@ func (d *DB) Migrate() error {
         }
     }
 
-    for k,_ := range nowTableMap {
+    for k := range nowTableMap {
         _,ok := newTableMap[k]
         if !ok {
             cmd := fmt.Sprintf("DROP TABLE %s", k)
